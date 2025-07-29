@@ -1,0 +1,75 @@
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE and Editor files
+.vscode/
+.vs/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+*.cache
+
+# Node.js dependencies (if you add them later)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
+dist/
+build/
+*.min.js
+*.min.css
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Backup files
+*.bak
+*.backup
+
+# System files
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# Personal notes and drafts
+notes.txt
+draft.md
+TODO.md
+
+# Large media files (uncomment if needed)
+# *.mp4
+# *.avi
+# *.mov
+# *.wmv
+
+# Compressed files
+# *.zip
+# *.rar
+# *.7z

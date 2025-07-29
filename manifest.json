@@ -1,0 +1,62 @@
+{
+    "name": "Saptarshi Ghosh - Portfolio",
+    "short_name": "SG Portfolio",
+    "description": "Professional portfolio of Saptarshi Ghosh - AI/ML Developer & Creative Designer",
+    "start_url": "/Portfolio/",
+    "display": "standalone",
+    "background_color": "#000000",
+    "theme_color": "#64ffda",
+    "orientation": "portrait-primary",
+    "categories": ["portfolio", "developer", "ai", "ml"],
+    "lang": "en-US",
+    "icons": [
+        {
+            "src": "assets/SGLogo.ico",
+            "sizes": "16x16 32x32 48x48",
+            "type": "image/x-icon"
+        },
+        {
+            "src": "assets/Asset 5.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "assets/Layer 2.png",
+            "sizes": "1280x720",
+            "type": "image/png",
+            "label": "Portfolio Homepage"
+        }
+    ],
+    "prefer_related_applications": false,
+    "scope": "/Portfolio/",
+    "id": "/Portfolio/",
+    "shortcuts": [
+        {
+            "name": "Projects",
+            "short_name": "Projects",
+            "description": "View my AI/ML and web development projects",
+            "url": "/Portfolio/#projects",
+            "icons": [
+                {
+                    "src": "assets/Asset 5.svg",
+                    "sizes": "96x96"
+                }
+            ]
+        },
+        {
+            "name": "Contact",
+            "short_name": "Contact",
+            "description": "Get in touch with me",
+            "url": "/Portfolio/#contact",
+            "icons": [
+                {
+                    "src": "assets/Asset 5.svg",
+                    "sizes": "96x96"
+                }
+            ]
+        }
+    ]
+}
