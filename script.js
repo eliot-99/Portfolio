@@ -1,104 +1,8 @@
-// Device and Performance Detection
-const DeviceDetector = {
-    isMobile: window.innerWidth <= 768,
-    isSmallMobile: window.innerWidth <= 480,
-    isTablet: window.innerWidth > 768 && window.innerWidth <= 1024,
-    isLowPerformance: false,
-    
-    init() {
-        // Detect low-performance devices
-        this.detectPerformance();
-        
-        // Add performance class to body
-        if (this.isLowPerformance || this.isSmallMobile) {
-            document.body.classList.add('low-performance');
-        }
-        
-        if (this.isMobile) {
-            document.body.classList.add('mobile-device');
-        }
-        
-        if (this.isTablet) {
-            document.body.classList.add('tablet-device');
-        }
-    },
-    
-    detectPerformance() {
-        // Check for low-end device indicators
-        const hardwareConcurrency = navigator.hardwareConcurrency || 1;
-        const deviceMemory = navigator.deviceMemory || 1;
-        const connection = navigator.connection;
-        
-        // Consider device low-performance if:
-        this.isLowPerformance = (
-            hardwareConcurrency <= 2 ||  // 2 or fewer CPU cores
-            deviceMemory <= 2 ||         // 2GB or less RAM
-            this.isSmallMobile ||        // Small mobile screen
-            (connection && connection.effectiveType && 
-             ['slow-2g', '2g', '3g'].includes(connection.effectiveType)) // Slow connection
-        );
-    }
-};
-
-// Initialize device detection
-DeviceDetector.init();
-
-// Dynamic Performance Monitor
-const PerformanceMonitor = {
-    frameCount: 0,
-    lastTime: performance.now(),
-    fps: 60,
-    lowFpsCount: 0,
-    
-    init() {
-        this.monitorFrameRate();
-    },
-    
-    monitorFrameRate() {
-        const now = performance.now();
-        this.frameCount++;
-        
-        if (now - this.lastTime >= 1000) {
-            this.fps = this.frameCount;
-            this.frameCount = 0;
-            this.lastTime = now;
-            
-            // If FPS drops below 30 for 3 consecutive seconds, enable performance mode
-            if (this.fps < 30) {
-                this.lowFpsCount++;
-                if (this.lowFpsCount >= 3) {
-                    this.enablePerformanceMode();
-                }
-            } else {
-                this.lowFpsCount = 0;
-            }
-        }
-        
-        requestAnimationFrame(() => this.monitorFrameRate());
-    },
-    
-    enablePerformanceMode() {
-        if (!document.body.classList.contains('low-performance')) {
-            document.body.classList.add('low-performance');
-            DeviceDetector.isLowPerformance = true;
-            console.log('Performance mode enabled due to low FPS');
-        }
-    }
-};
-
-// Initialize performance monitoring
-PerformanceMonitor.init();
-
 // Performance monitoring
 const performanceObserver = new PerformanceObserver((list) => {
     for (const entry of list.getEntries()) {
         if (entry.entryType === 'navigation') {
             // Track page load performance
-            if (entry.loadEventEnd - entry.loadEventStart > 3000) {
-                // Page took more than 3 seconds to load, enable performance mode
-                document.body.classList.add('low-performance');
-                DeviceDetector.isLowPerformance = true;
-            }
         }
     }
 });
@@ -212,23 +116,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const homeSection = document.querySelector('.home');
         
         if (!grid || !homeSection) return;
-        
-        // Use device detection for performance optimization
-        if (DeviceDetector.isLowPerformance || DeviceDetector.isSmallMobile) {
-            return; // Exit early for low-performance devices
-        }
-        
-        if (DeviceDetector.isMobile) {
-            // Only enable basic touch interactions on mobile
-            homeSection.addEventListener('touchstart', (e) => {
-                const touch = e.touches[0];
-                const rect = homeSection.getBoundingClientRect();
-                const x = ((touch.clientX - rect.left) / rect.width) * 100;
-                const y = ((touch.clientY - rect.top) / rect.height) * 100;
-                createGridRipple(x, y);
-            });
-            return; // Skip desktop interactions
-        }
         
         let mouseX = 0;
         let mouseY = 0;
@@ -5657,4 +5544,187 @@ function createSocialHoverParticles(socialLink) {
             particle.remove();
         };
     }
-};
+}
+
+// Footer Particle System
+function initFooterParticleSystem() {
+    const footerParticles = document.querySelector('.footer-particles');
+    if (!footerParticles) return;
+    
+    // Add more dynamic particles
+    setInterval(() => {
+        if (Math.random() < 0.3) {
+            createFooterParticle(footerParticles);
+        }
+    }, 2000);
+}
+
+// Create footer particle
+function createFooterParticle(container) {
+    const particle = document.createElement('div');
+    particle.style.cssText = `
+        position: absolute;
+        width: 2px;
+        height: 2px;
+        background: rgba(100, 255, 218, 0.8);
+        border-radius: 50%;
+        left: ${Math.random() * 100}%;
+        bottom: 0;
+        pointer-events: none;
+        animation: floatFooterParticles ${8 + Math.random() * 4}s linear forwards;
+    `;
+    
+    container.appendChild(particle);
+    
+    setTimeout(() => {
+        particle.remove();
+    }, 12000);
+}
+
+// Dynamic Footer Background
+function initDynamicFooterBackground() {
+    const footer = document.querySelector('.footer.creative-footer');
+    if (!footer) return;
+    
+    // Add mouse move effect
+    footer.addEventListener('mousemove', (e) => {
+        const rect = footer.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width;
+        const y = (e.clientY - rect.top) / rect.height;
+        
+        // Update gradient orbs position slightly
+        const orbs = footer.querySelectorAll('.orb');
+        orbs.forEach((orb, index) => {
+            const intensity = 10 + index * 5;
+            const offsetX = (x - 0.5) * intensity;
+            const offsetY = (y - 0.5) * intensity;
+            orb.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+        });
+    });
+    
+    // Reset on mouse leave
+    footer.addEventListener('mouseleave', () => {
+        const orbs = footer.querySelectorAll('.orb');
+        orbs.forEach(orb => {
+            orb.style.transform = 'translate(0, 0)';
+        });
+    });
+}
+
+// Initialize footer on DOM load
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCreativeFooter);
+} else {
+    initCreativeFooter();
+}
+
+console.log('🎨 Creative Interactive Footer Script Loaded Successfully!');
+
+
+
+// Touch Effects Controller for Mobile
+class TouchEffects {
+    constructor() {
+        this.isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        this.longPressTimer = null;
+        this.longPressDelay = 500;
+        
+        if (this.isTouch) {
+            this.init();
+        }
+    }
+    
+    init() {
+        console.log('📱 Initializing Touch Effects...');
+        
+        // Touch start effects
+        document.addEventListener('touchstart', (e) => {
+            this.handleTouchStart(e);
+        }, { passive: true });
+        
+        // Touch end effects
+        document.addEventListener('touchend', (e) => {
+            this.handleTouchEnd(e);
+        }, { passive: true });
+        
+        // Touch move effects
+        document.addEventListener('touchmove', (e) => {
+            this.handleTouchMove(e);
+        }, { passive: true });
+        
+        // Add touch feedback classes to interactive elements
+        this.initTouchFeedback();
+        
+        console.log('✨ Touch Effects Initialized Successfully!');
+    }
+    
+    handleTouchStart(e) {
+        const touch = e.touches[0];
+        const x = touch.clientX;
+        const y = touch.clientY;
+        
+        // Create touch ripple
+        this.createTouchRipple(x, y);
+        
+        // Create touch glow
+        this.createTouchGlow(x, y);
+        
+        // Create touch particles
+        this.createTouchParticles(x, y);
+        
+        // Start long press timer
+        this.startLongPressTimer(e.target);
+    }
+    
+    handleTouchEnd(e) {
+        // Clear long press timer
+        this.clearLongPressTimer();
+        
+        // Remove active states
+        document.querySelectorAll('.touch-feedback.active').forEach(element => {
+            element.classList.remove('active');
+        });
+    }
+    
+    handleTouchMove(e) {
+        // Clear long press timer on move
+        this.clearLongPressTimer();
+        
+        const touch = e.touches[0];
+        const x = touch.clientX;
+        const y = touch.clientY;
+        
+        // Create subtle trail particles
+        if (Math.random() < 0.3) {
+            this.createTouchTrail(x, y);
+        }
+    }
+    
+    createTouchRipple(x, y) {
+        const ripple = document.createElement('div');
+        ripple.className = 'touch-ripple';
+        ripple.style.left = `${x}px`;
+        ripple.style.top = `${y}px`;
+        ripple.style.width = '20px';
+        ripple.style.height = '20px';
+        
+        document.body.appendChild(ripple);
+        
+        setTimeout(() => {
+            ripple.remove();
+        }, 800);
+    }
+    
+    createTouchGlow(x, y) {
+        const glow = document.createElement('div');
+        glow.className = 'touch-glow';
+        glow.style.left = `${x}px`;
+        glow.style.top = `${y}px`;
+        
+        document.body.appendChild(glow);
+        
+        setTimeout(() => {
+            glow.remove();
+        }, 1500);
+    }
+}

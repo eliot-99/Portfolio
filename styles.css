@@ -443,13 +443,9 @@ html {
     }
 }
 
-/* =============== DEVICE-SPECIFIC PERFORMANCE OPTIMIZATIONS =============== */
-
-/* Low-performance device optimizations */
+/* Performance Optimizations for Low-End Devices */
 .low-performance .touch-particle,
-.low-performance .heart-particle,
-.low-performance .touch-wave,
-.low-performance .touch-glow {
+.low-performance .heart-particle {
     display: none !important;
 }
 
@@ -457,70 +453,8 @@ html {
     animation-duration: 0.4s;
 }
 
-.low-performance .infinite-grid-container,
-.low-performance .geometric-shapes,
-.low-performance .particles-container {
-    display: none !important;
-}
-
-.low-performance * {
-    animation-duration: 0.3s !important;
-    transition-duration: 0.2s !important;
-}
-
-.low-performance .navbar-logo,
-.low-performance .home-stats .stat-item {
-    animation: none !important;
-}
-
-/* Mobile device optimizations */
-.mobile-device .infinite-grid::before,
-.mobile-device .infinite-grid::after {
-    display: none;
-}
-
-.mobile-device .particles-container {
-    opacity: 0.3;
-}
-
-.mobile-device .shape-3,
-.mobile-device .shape-4,
-.mobile-device .shape-5 {
-    display: none;
-}
-
-/* Tablet device optimizations */
-.tablet-device .infinite-grid::after {
-    display: none;
-}
-
-.tablet-device .shape-5 {
-    display: none;
-}
-
-/* Respect user's motion preferences */
-@media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-        scroll-behavior: auto !important;
-    }
-    
-    .infinite-grid-container,
-    .geometric-shapes,
-    .particles-container {
-        display: none !important;
-    }
-    
-    .touch-ripple,
-    .touch-particle,
-    .touch-wave,
-    .touch-glow {
-        display: none !important;
-    }
+.low-performance .touch-glow {
+    animation-duration: 0.8s;
 }
 
 .container {
@@ -1348,149 +1282,26 @@ h1, h2, h3, h4, h5, h6 {
     opacity: 0.8;
 }
 
-/* =============== MOBILE PERFORMANCE OPTIMIZATIONS =============== */
-
-/* Tablets and smaller screens */
-@media (max-width: 1024px) {
-    /* Reduce animation complexity */
-    .infinite-grid::before,
-    .infinite-grid::after {
-        display: none;
-    }
-    
-    /* Simplify particle effects */
-    .particles-container {
-        opacity: 0.3;
-    }
-    
-    /* Reduce geometric shapes */
-    .shape-4,
-    .shape-5 {
-        display: none;
-    }
-}
-
-/* Mobile devices */
+/* Mobile optimizations for grid */
 @media (max-width: 768px) {
-    /* Disable heavy background animations */
     .infinite-grid {
-        animation: none !important;
-        background-size: 40px 40px;
-        opacity: 0.2;
+        background-size: 30px 30px;
+        animation-duration: 15s;
     }
     
-    .infinite-grid::before,
+    .infinite-grid::before {
+        background-size: 120px 120px;
+        animation-duration: 20s;
+    }
+    
     .infinite-grid::after {
-        display: none !important;
+        background-size: 60px 60px;
+        animation-duration: 18s;
     }
     
     /* Disable mouse interactions on mobile */
     .infinite-grid-container {
         pointer-events: none;
-    }
-    
-    /* Simplify geometric shapes */
-    .geometric-shapes {
-        opacity: 0.3;
-    }
-    
-    .shape {
-        animation-duration: 40s !important;
-    }
-    
-    .shape-3,
-    .shape-4,
-    .shape-5 {
-        display: none;
-    }
-    
-    /* Disable particle animations */
-    .particles-container {
-        display: none !important;
-    }
-    
-    /* Reduce logo animations */
-    .navbar-logo {
-        animation: none !important;
-    }
-    
-    /* Simplify button effects */
-    .btn::before {
-        display: none;
-    }
-    
-    .btn:hover {
-        transform: none;
-        background: rgba(255, 255, 255, 0.1);
-    }
-    
-    /* Disable complex hover effects */
-    .project-card:hover,
-    .certificate-card:hover,
-    .skill-item:hover {
-        transform: none !important;
-    }
-    
-    /* Reduce scrollbar complexity */
-    ::-webkit-scrollbar-track::before,
-    ::-webkit-scrollbar-track::after,
-    ::-webkit-scrollbar-thumb::before {
-        display: none;
-    }
-    
-    /* Disable touch effects on low-end devices */
-    .touch-ripple,
-    .touch-particle,
-    .touch-wave,
-    .touch-glow {
-        display: none !important;
-    }
-}
-
-/* Small mobile devices */
-@media (max-width: 480px) {
-    /* Disable all background animations */
-    .infinite-grid-container {
-        display: none !important;
-    }
-    
-    .geometric-shapes {
-        display: none !important;
-    }
-    
-    /* Minimal animations only */
-    * {
-        animation-duration: 0.3s !important;
-        transition-duration: 0.2s !important;
-    }
-    
-    /* Disable all transform effects */
-    .home-stats .stat-item:hover,
-    .project-card:hover,
-    .certificate-card:hover,
-    .skill-item:hover,
-    .nav-link:hover {
-        transform: none !important;
-    }
-    
-    /* Disable wiggle animation */
-    .home-stats .stat-item {
-        animation: none !important;
-    }
-    
-    /* Simplify scrollbar */
-    ::-webkit-scrollbar {
-        width: 8px;
-        background: #1a1a1a;
-    }
-    
-    ::-webkit-scrollbar-thumb {
-        background: #64ffda;
-        border-radius: 4px;
-    }
-    
-    ::-webkit-scrollbar-track {
-        background: #0a0a0a;
     }
 }
 
