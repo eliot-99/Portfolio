@@ -20,6 +20,44 @@
     }
 }
 
+/* =============== SKILLS BACKGROUND ANIMATIONS CONTROL =============== */
+/* Hide all background animations in Technical Arsenal section for smaller screens */
+
+/* Hide background animations on tablets and mobile devices */
+@media (max-width: 1024px) {
+    /* Hide main skills background container */
+    .skills .skills-background {
+        display: none !important;
+    }
+    
+    /* Hide interactive background */
+    .skills .interactive-bg {
+        display: none !important;
+    }
+    
+    /* Hide individual animation elements */
+    .skills .floating-skills-bg,
+    .skills .matrix-rain,
+    .skills .tech-particles,
+    .skills .neural-network,
+    .skills .lightning-connections,
+    .skills .quantum-dots,
+    .skills .tech-grid,
+    .skills .floating-shapes,
+    .skills .connection-lines,
+    .skills #particleCanvas {
+        display: none !important;
+    }
+}
+
+/* Ensure animations are visible on desktop */
+@media (min-width: 1025px) {
+    .skills .skills-background,
+    .skills .interactive-bg {
+        display: block !important;
+    }
+}
+
 /* =============== UNIVERSAL TITLE CENTERING FIX =============== */
 /* Force center alignment for Designs and Photos title on all mobile devices */
 

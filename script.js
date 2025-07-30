@@ -1,8 +1,104 @@
+// Device and Performance Detection
+const DeviceDetector = {
+    isMobile: window.innerWidth <= 768,
+    isSmallMobile: window.innerWidth <= 480,
+    isTablet: window.innerWidth > 768 && window.innerWidth <= 1024,
+    isLowPerformance: false,
+    
+    init() {
+        // Detect low-performance devices
+        this.detectPerformance();
+        
+        // Add performance class to body
+        if (this.isLowPerformance || this.isSmallMobile) {
+            document.body.classList.add('low-performance');
+        }
+        
+        if (this.isMobile) {
+            document.body.classList.add('mobile-device');
+        }
+        
+        if (this.isTablet) {
+            document.body.classList.add('tablet-device');
+        }
+    },
+    
+    detectPerformance() {
+        // Check for low-end device indicators
+        const hardwareConcurrency = navigator.hardwareConcurrency || 1;
+        const deviceMemory = navigator.deviceMemory || 1;
+        const connection = navigator.connection;
+        
+        // Consider device low-performance if:
+        this.isLowPerformance = (
+            hardwareConcurrency <= 2 ||  // 2 or fewer CPU cores
+            deviceMemory <= 2 ||         // 2GB or less RAM
+            this.isSmallMobile ||        // Small mobile screen
+            (connection && connection.effectiveType && 
+             ['slow-2g', '2g', '3g'].includes(connection.effectiveType)) // Slow connection
+        );
+    }
+};
+
+// Initialize device detection
+DeviceDetector.init();
+
+// Dynamic Performance Monitor
+const PerformanceMonitor = {
+    frameCount: 0,
+    lastTime: performance.now(),
+    fps: 60,
+    lowFpsCount: 0,
+    
+    init() {
+        this.monitorFrameRate();
+    },
+    
+    monitorFrameRate() {
+        const now = performance.now();
+        this.frameCount++;
+        
+        if (now - this.lastTime >= 1000) {
+            this.fps = this.frameCount;
+            this.frameCount = 0;
+            this.lastTime = now;
+            
+            // If FPS drops below 30 for 3 consecutive seconds, enable performance mode
+            if (this.fps < 30) {
+                this.lowFpsCount++;
+                if (this.lowFpsCount >= 3) {
+                    this.enablePerformanceMode();
+                }
+            } else {
+                this.lowFpsCount = 0;
+            }
+        }
+        
+        requestAnimationFrame(() => this.monitorFrameRate());
+    },
+    
+    enablePerformanceMode() {
+        if (!document.body.classList.contains('low-performance')) {
+            document.body.classList.add('low-performance');
+            DeviceDetector.isLowPerformance = true;
+            console.log('Performance mode enabled due to low FPS');
+        }
+    }
+};
+
+// Initialize performance monitoring
+PerformanceMonitor.init();
+
 // Performance monitoring
 const performanceObserver = new PerformanceObserver((list) => {
     for (const entry of list.getEntries()) {
         if (entry.entryType === 'navigation') {
             // Track page load performance
+            if (entry.loadEventEnd - entry.loadEventStart > 3000) {
+                // Page took more than 3 seconds to load, enable performance mode
+                document.body.classList.add('low-performance');
+                DeviceDetector.isLowPerformance = true;
+            }
         }
     }
 });
@@ -109,6 +205,165 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 10);
         });
     }
+    
+    // Interactive Infinite Zoom Grid
+    function initInteractiveGrid() {
+        const grid = document.getElementById('infinite-grid');
+        const homeSection = document.querySelector('.home');
+        
+        if (!grid || !homeSection) return;
+        
+        // Use device detection for performance optimization
+        if (DeviceDetector.isLowPerformance || DeviceDetector.isSmallMobile) {
+            return; // Exit early for low-performance devices
+        }
+        
+        if (DeviceDetector.isMobile) {
+            // Only enable basic touch interactions on mobile
+            homeSection.addEventListener('touchstart', (e) => {
+                const touch = e.touches[0];
+                const rect = homeSection.getBoundingClientRect();
+                const x = ((touch.clientX - rect.left) / rect.width) * 100;
+                const y = ((touch.clientY - rect.top) / rect.height) * 100;
+                createGridRipple(x, y);
+            });
+            return; // Skip desktop interactions
+        }
+        
+        let mouseX = 0;
+        let mouseY = 0;
+        let isMouseInHome = false;
+        
+        // Mouse movement interaction
+        homeSection.addEventListener('mousemove', (e) => {
+            const rect = homeSection.getBoundingClientRect();
+            mouseX = (e.clientX - rect.left) / rect.width;
+            mouseY = (e.clientY - rect.top) / rect.height;
+            
+            // Apply dynamic transform based on mouse position
+            const translateX = (mouseX - 0.5) * 20;
+            const translateY = (mouseY - 0.5) * 20;
+            const scale = 1 + (mouseX * 0.1);
+            
+            grid.style.transform = `translate(-50%, -50%) translate(${translateX}px, ${translateY}px) scale(${scale})`;
+            grid.style.filter = `hue-rotate(${mouseX * 60}deg) brightness(${1 + mouseY * 0.2})`;
+        });
+        
+        // Mouse enter/leave effects
+        homeSection.addEventListener('mouseenter', () => {
+            isMouseInHome = true;
+            grid.style.transition = 'filter 0.3s ease';
+            grid.style.animationPlayState = 'paused';
+        });
+        
+        homeSection.addEventListener('mouseleave', () => {
+            isMouseInHome = false;
+            grid.style.transition = 'all 0.5s ease';
+            grid.style.transform = 'translate(-50%, -50%)';
+            grid.style.filter = 'none';
+            grid.style.animationPlayState = 'running';
+        });
+        
+        // Click interaction - create ripple effect
+        homeSection.addEventListener('click', (e) => {
+            if (e.target.closest('.home-content')) return; // Don't trigger on content clicks
+            
+            const rect = homeSection.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            const y = ((e.clientY - rect.top) / rect.height) * 100;
+            
+            createGridRipple(x, y);
+        });
+        
+        // Scroll-based animation speed adjustment
+        let ticking = false;
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                requestAnimationFrame(() => {
+                    const scrollY = window.pageYOffset;
+                    const homeHeight = homeSection.offsetHeight;
+                    const scrollProgress = Math.min(scrollY / homeHeight, 1);
+                    
+                    // Adjust animation speed based on scroll
+                    const animationSpeed = 1 + scrollProgress * 0.5;
+                    grid.style.animationDuration = `${20 / animationSpeed}s`;
+                    
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        });
+        
+        // Touch interactions for mobile
+        if ('ontouchstart' in window) {
+            let touchStartTime = 0;
+            
+            homeSection.addEventListener('touchstart', (e) => {
+                touchStartTime = Date.now();
+                const touch = e.touches[0];
+                const rect = homeSection.getBoundingClientRect();
+                const x = ((touch.clientX - rect.left) / rect.width) * 100;
+                const y = ((touch.clientY - rect.top) / rect.height) * 100;
+                
+                // Create subtle touch feedback
+                createGridRipple(x, y);
+            });
+            
+            homeSection.addEventListener('touchmove', (e) => {
+                e.preventDefault(); // Prevent scrolling while touching grid
+                const touch = e.touches[0];
+                const rect = homeSection.getBoundingClientRect();
+                const touchX = (touch.clientX - rect.left) / rect.width;
+                const touchY = (touch.clientY - rect.top) / rect.height;
+                
+                // Apply subtle transform on touch move
+                const translateX = (touchX - 0.5) * 10;
+                const translateY = (touchY - 0.5) * 10;
+                
+                grid.style.transform = `translate(-50%, -50%) translate(${translateX}px, ${translateY}px)`;
+            });
+            
+            homeSection.addEventListener('touchend', () => {
+                // Reset transform on touch end
+                grid.style.transition = 'transform 0.5s ease';
+                grid.style.transform = 'translate(-50%, -50%)';
+                
+                setTimeout(() => {
+                    grid.style.transition = '';
+                }, 500);
+            });
+        }
+    }
+    
+    // Create grid ripple effect
+    function createGridRipple(x, y) {
+        const ripple = document.createElement('div');
+        ripple.className = 'grid-ripple';
+        ripple.style.cssText = `
+            position: absolute;
+            left: ${x}%;
+            top: ${y}%;
+            width: 0;
+            height: 0;
+            border: 2px solid rgba(100, 255, 218, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 2;
+            animation: gridRippleEffect 1.5s ease-out forwards;
+        `;
+        
+        document.querySelector('.infinite-grid-container').appendChild(ripple);
+        
+        setTimeout(() => {
+            if (ripple.parentNode) {
+                ripple.parentNode.removeChild(ripple);
+            }
+        }, 1500);
+    }
+    
+    // Initialize interactive grid
+    initInteractiveGrid();
     
     // Interactive About Section Animations will be initialized later
     
@@ -645,23 +900,126 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
         
-        // Interactive stat items
+        // Interactive stat items with navigation
         const statItems = document.querySelectorAll('.home-stats .stat-item');
+        
+        // Define navigation mapping for stat items
+        const statNavigation = {
+            'Major Projects': 'projects',
+            'Years Study': 'education',
+            'Certificates': 'certificates',
+            'Achievements': 'achievements'
+        };
+        
         statItems.forEach(item => {
+            // Add hover effects
             item.addEventListener('mouseenter', () => {
                 item.style.transform = 'translateY(-10px) scale(1.05)';
                 item.style.boxShadow = '0 10px 30px rgba(255, 255, 255, 0.1)';
+                item.style.cursor = 'pointer';
             });
             
             item.addEventListener('mouseleave', () => {
                 item.style.transform = 'translateY(0) scale(1)';
                 item.style.boxShadow = 'none';
             });
+            
+            // Add click navigation
+            item.addEventListener('click', (e) => {
+                const statLabel = item.querySelector('.stat-label').textContent;
+                const targetSection = statNavigation[statLabel];
+                
+                if (targetSection) {
+                    // Add click animation
+                    item.style.transform = 'translateY(-5px) scale(0.95)';
+                    
+                    // Create ripple effect
+                    createStatRipple(item, e);
+                    
+                    // Navigate to section after animation
+                    setTimeout(() => {
+                        const targetElement = document.getElementById(targetSection);
+                        if (targetElement) {
+                            targetElement.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                            
+                            // Update active nav link
+                            updateActiveNavLink(targetSection);
+                        }
+                        
+                        // Reset transform
+                        setTimeout(() => {
+                            item.style.transform = 'translateY(0) scale(1)';
+                        }, 200);
+                    }, 150);
+                }
+            });
+            
+            // Add touch feedback for mobile
+            item.addEventListener('touchstart', (e) => {
+                item.style.transform = 'translateY(-5px) scale(0.98)';
+                createStatRipple(item, e.touches[0]);
+            });
+            
+            item.addEventListener('touchend', () => {
+                setTimeout(() => {
+                    item.style.transform = 'translateY(0) scale(1)';
+                }, 100);
+            });
         });
         
         // Cursor trail effect
         if (window.innerWidth > 768) {
             initCursorTrail();
+        }
+    }
+    
+    // Create ripple effect for stat items
+    function createStatRipple(element, event) {
+        const ripple = document.createElement('div');
+        const rect = element.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = event.clientX - rect.left - size / 2;
+        const y = event.clientY - rect.top - size / 2;
+        
+        ripple.style.cssText = `
+            position: absolute;
+            width: ${size}px;
+            height: ${size}px;
+            left: ${x}px;
+            top: ${y}px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10;
+            animation: statRippleEffect 0.6s ease-out forwards;
+        `;
+        
+        element.style.position = 'relative';
+        element.style.overflow = 'hidden';
+        element.appendChild(ripple);
+        
+        setTimeout(() => {
+            if (ripple.parentNode) {
+                ripple.parentNode.removeChild(ripple);
+            }
+        }, 600);
+    }
+    
+    // Update active navigation link
+    function updateActiveNavLink(sectionId) {
+        // Remove active class from all nav links
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+        });
+        
+        // Add active class to corresponding nav link
+        const activeLink = document.querySelector(`a[href="#${sectionId}"]`);
+        if (activeLink) {
+            activeLink.classList.add('active');
         }
     }
     
@@ -3045,7 +3403,7 @@ function triggerTypewriter() {
     typewriterTriggered = true;
     
     const typewriterText = document.getElementById('typewriter-text');
-    const fullText = "I'm Saptarshi Ghosh, a 3rd-year B.Tech CSE (AI/ML) student at UEM Kolkata with a CGPA of 8.59. I'm passionate about developing cutting-edge AI solutions and creating impactful designs. As a Vice Chancellor's Award recipient and Lead Designer for Ureckon fest, I combine technical excellence with creative innovation to solve real-world problems through technology.";
+    const fullText = "I'm Saptarshi Ghosh, a Final-year B.Tech CSE (AI/ML) student at UEM Kolkata with a CGPA of 8.46. I'm passionate about developing cutting-edge AI solutions and creating impactful designs. As a Vice Chancellor's Award recipient and Lead Designer for Ureckon fest, I combine technical excellence with creative innovation to solve real-world problems through technology.";
     
     if (typewriterText) {
         let charIndex = 0;
@@ -5299,240 +5657,4 @@ function createSocialHoverParticles(socialLink) {
             particle.remove();
         };
     }
-}
-
-// Footer Particle System
-function initFooterParticleSystem() {
-    const footerParticles = document.querySelector('.footer-particles');
-    if (!footerParticles) return;
-    
-    // Add more dynamic particles
-    setInterval(() => {
-        if (Math.random() < 0.3) {
-            createFooterParticle(footerParticles);
-        }
-    }, 2000);
-}
-
-// Create footer particle
-function createFooterParticle(container) {
-    const particle = document.createElement('div');
-    particle.style.cssText = `
-        position: absolute;
-        width: 2px;
-        height: 2px;
-        background: rgba(100, 255, 218, 0.8);
-        border-radius: 50%;
-        left: ${Math.random() * 100}%;
-        bottom: 0;
-        pointer-events: none;
-        animation: floatFooterParticles ${8 + Math.random() * 4}s linear forwards;
-    `;
-    
-    container.appendChild(particle);
-    
-    setTimeout(() => {
-        particle.remove();
-    }, 12000);
-}
-
-// Dynamic Footer Background
-function initDynamicFooterBackground() {
-    const footer = document.querySelector('.footer.creative-footer');
-    if (!footer) return;
-    
-    // Add mouse move effect
-    footer.addEventListener('mousemove', (e) => {
-        const rect = footer.getBoundingClientRect();
-        const x = (e.clientX - rect.left) / rect.width;
-        const y = (e.clientY - rect.top) / rect.height;
-        
-        // Update gradient orbs position slightly
-        const orbs = footer.querySelectorAll('.orb');
-        orbs.forEach((orb, index) => {
-            const intensity = 10 + index * 5;
-            const offsetX = (x - 0.5) * intensity;
-            const offsetY = (y - 0.5) * intensity;
-            orb.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
-        });
-    });
-    
-    // Reset on mouse leave
-    footer.addEventListener('mouseleave', () => {
-        const orbs = footer.querySelectorAll('.orb');
-        orbs.forEach(orb => {
-            orb.style.transform = 'translate(0, 0)';
-        });
-    });
-}
-
-// Initialize footer on DOM load
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initCreativeFooter);
-} else {
-    initCreativeFooter();
-}
-
-console.log('🎨 Creative Interactive Footer Script Loaded Successfully!');
-
-
-
-// Touch Effects Controller for Mobile
-class TouchEffects {
-    constructor() {
-        this.isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-        this.longPressTimer = null;
-        this.longPressDelay = 500;
-        
-        if (this.isTouch) {
-            this.init();
-        }
-    }
-    
-    init() {
-        console.log('📱 Initializing Touch Effects...');
-        
-        // Touch start effects
-        document.addEventListener('touchstart', (e) => {
-            this.handleTouchStart(e);
-        }, { passive: true });
-        
-        // Touch end effects
-        document.addEventListener('touchend', (e) => {
-            this.handleTouchEnd(e);
-        }, { passive: true });
-        
-        // Touch move effects
-        document.addEventListener('touchmove', (e) => {
-            this.handleTouchMove(e);
-        }, { passive: true });
-        
-        // Add touch feedback classes to interactive elements
-        this.initTouchFeedback();
-        
-        console.log('✨ Touch Effects Initialized Successfully!');
-    }
-    
-    handleTouchStart(e) {
-        const touch = e.touches[0];
-        const x = touch.clientX;
-        const y = touch.clientY;
-        
-        // Create touch ripple
-        this.createTouchRipple(x, y);
-        
-        // Create touch glow
-        this.createTouchGlow(x, y);
-        
-        // Create touch particles
-        this.createTouchParticles(x, y);
-        
-        // Start long press timer
-        this.startLongPressTimer(e.target);
-    }
-    
-    handleTouchEnd(e) {
-        // Clear long press timer
-        this.clearLongPressTimer();
-        
-        // Remove active states
-        document.querySelectorAll('.touch-feedback.active').forEach(element => {
-            element.classList.remove('active');
-        });
-    }
-    
-    handleTouchMove(e) {
-        // Clear long press timer on move
-        this.clearLongPressTimer();
-        
-        const touch = e.touches[0];
-        const x = touch.clientX;
-        const y = touch.clientY;
-        
-        // Create subtle trail particles
-        if (Math.random() < 0.3) {
-            this.createTouchTrail(x, y);
-        }
-    }
-    
-    createTouchRipple(x, y) {
-        const ripple = document.createElement('div');
-        ripple.className = 'touch-ripple';
-        ripple.style.left = `${x}px`;
-        ripple.style.top = `${y}px`;
-        ripple.style.width = '20px';
-        ripple.style.height = '20px';
-        
-        document.body.appendChild(ripple);
-        
-        setTimeout(() => {
-            ripple.remove();
-        }, 800);
-    }
-    
-    createTouchGlow(x, y) {
-        const glow = document.createElement('div');
-        glow.className = 'touch-glow';
-        glow.style.left = `${x}px`;
-        glow.style.top = `${y}px`;
-        
-        document.body.appendChild(glow);
-        
-        setTimeout(() => {
-            glow.remove();
-        }, 1500);
-    }
-    
-    createTouchParticles(x, y) {
-        const particleCount = 6;
-        
-        for (let i = 0; i < particleCount; i++) {
-            const particle = document.createElement('div');
-            particle.className = 'touch-particle';
-            
-            const angle = (i / particleCount) * Math.PI * 2;
-            const distance = 30 + Math.random() * 20;
-            const finalX = x + Math.cos(angle) * distance;
-            const finalY = y + Math.sin(angle) * distance;
-            
-            particle.style.left = `${x}px`;
-            particle.style.top = `${y}px`;
-            particle.style.transform = 'translate(-50%, -50%)';
-            
-            document.body.appendChild(particle);
-            
-            // Animate particle
-            particle.animate([
-                {
-                    transform: 'translate(-50%, -50%) scale(0)',
-                    left: `${x}px`,
-                    top: `${y}px`
-                },
-                {
-                    transform: 'translate(-50%, -50%) scale(1)',
-                    left: `${finalX}px`,
-                    top: `${finalY}px`
-                }
-            ], {
-                duration: 1200,
-                easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
-            });
-            
-            setTimeout(() => {
-                particle.remove();
-            }, 1200);
-        }
-    }
-    
-    createTouchWave(x, y) {
-        const wave = document.createElement('div');
-        wave.className = 'touch-wave';
-        wave.style.left = `${x}px`;
-        wave.style.top = `${y}px`;
-        
-        document.body.appendChild(wave);
-        
-        setTimeout(() => {
-            wave.remove();
-        }, 1000);
-    }}
+};

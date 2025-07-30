@@ -5,10 +5,7 @@
     box-sizing: border-box;
 }
 
-/* Fallback support for older browsers */
-.fallback-mode {
-    /* Simplified styles for browsers that don't support modern features */
-}
+
 
 /* Browser compatibility fallbacks */
 @supports not (display: grid) {
@@ -252,7 +249,7 @@ html {
 }
 
 /* Scrollbar Progress Indicator */
-.scroll-progress {
+/* .scroll-progress {
     position: fixed;
     top: 0;
     left: 0;
@@ -287,7 +284,7 @@ html {
         background-position: 100% 0%;
         box-shadow: 0 0 20px rgba(100, 255, 218, 0.8);
     }
-}
+} */
 
 /* =============== CREATIVE TOUCH EFFECTS FOR MOBILE =============== */
 
@@ -406,6 +403,18 @@ html {
     }
 }
 
+/* Stat item ripple effect animation */
+@keyframes statRippleEffect {
+    0% {
+        transform: scale(0);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
 /* Touch glow effect */
 .touch-glow {
     position: fixed;
@@ -434,9 +443,13 @@ html {
     }
 }
 
-/* Performance Optimizations for Low-End Devices */
+/* =============== DEVICE-SPECIFIC PERFORMANCE OPTIMIZATIONS =============== */
+
+/* Low-performance device optimizations */
 .low-performance .touch-particle,
-.low-performance .heart-particle {
+.low-performance .heart-particle,
+.low-performance .touch-wave,
+.low-performance .touch-glow {
     display: none !important;
 }
 
@@ -444,8 +457,70 @@ html {
     animation-duration: 0.4s;
 }
 
-.low-performance .touch-glow {
-    animation-duration: 0.8s;
+.low-performance .infinite-grid-container,
+.low-performance .geometric-shapes,
+.low-performance .particles-container {
+    display: none !important;
+}
+
+.low-performance * {
+    animation-duration: 0.3s !important;
+    transition-duration: 0.2s !important;
+}
+
+.low-performance .navbar-logo,
+.low-performance .home-stats .stat-item {
+    animation: none !important;
+}
+
+/* Mobile device optimizations */
+.mobile-device .infinite-grid::before,
+.mobile-device .infinite-grid::after {
+    display: none;
+}
+
+.mobile-device .particles-container {
+    opacity: 0.3;
+}
+
+.mobile-device .shape-3,
+.mobile-device .shape-4,
+.mobile-device .shape-5 {
+    display: none;
+}
+
+/* Tablet device optimizations */
+.tablet-device .infinite-grid::after {
+    display: none;
+}
+
+.tablet-device .shape-5 {
+    display: none;
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    
+    .infinite-grid-container,
+    .geometric-shapes,
+    .particles-container {
+        display: none !important;
+    }
+    
+    .touch-ripple,
+    .touch-particle,
+    .touch-wave,
+    .touch-glow {
+        display: none !important;
+    }
 }
 
 .container {
@@ -691,7 +766,7 @@ h1, h2, h3, h4, h5, h6 {
     }
 }
 
-.nav-gradient-line {
+/* .nav-gradient-line {
     position: absolute;
     bottom: 0;
     left: 0;
@@ -709,7 +784,7 @@ h1, h2, h3, h4, h5, h6 {
 @keyframes gradientMove {
     0%, 100% { transform: translateX(-100%); }
     50% { transform: translateX(100%); }
-}
+} */
 
 .header.creative-nav.scrolled {
     background: linear-gradient(135deg, rgba(17, 17, 17, 0.98) 0%, rgba(25, 25, 25, 0.99) 100%);
@@ -849,20 +924,45 @@ h1, h2, h3, h4, h5, h6 {
     }
 }
 
-/* Logo glow effect on hover */
-.logo-link::before {
-    content: '';
-    position: absolute;
-    inset: -5px;
-    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-    border-radius: 8px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: -1;
+/* Logo glow effect on hover - REMOVED to fix white box issue */
+
+/* Remove any unwanted focus/active states that cause white box */
+.logo-link {
+    outline: none !important;
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
 }
 
-.logo-link:hover::before {
-    opacity: 1;
+.logo-link:focus,
+.logo-link:active,
+.logo-link:visited {
+    outline: none !important;
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.logo-container {
+    background: none !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* Override any global link styles for logo */
+.nav-logo a,
+.nav-logo a:link,
+.nav-logo a:visited,
+.nav-logo a:hover,
+.nav-logo a:active,
+.nav-logo a:focus {
+    background: none !important;
+    background-color: transparent !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    text-decoration: none !important;
 }
 
 /* Logo click animation */
@@ -1128,6 +1228,270 @@ h1, h2, h3, h4, h5, h6 {
     width: 100%;
     height: 100%;
     z-index: 1;
+}
+
+/* Interactive Infinite Zoom Grid Background */
+.infinite-grid-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.infinite-grid {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 200%;
+    height: 200%;
+    transform: translate(-50%, -50%);
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: infiniteZoom 20s linear infinite;
+    opacity: 0.6;
+}
+
+.infinite-grid::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(rgba(100, 255, 218, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(100, 255, 218, 0.02) 1px, transparent 1px);
+    background-size: 200px 200px;
+    animation: infiniteZoomSlow 30s linear infinite reverse;
+}
+
+.infinite-grid::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.01) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
+    background-size: 100px 100px;
+    animation: infiniteZoomMedium 25s linear infinite;
+}
+
+@keyframes infiniteZoom {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.6;
+    }
+    50% {
+        opacity: 0.3;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(2);
+        opacity: 0.6;
+    }
+}
+
+@keyframes infiniteZoomSlow {
+    0% {
+        transform: scale(1);
+        opacity: 0.4;
+    }
+    50% {
+        opacity: 0.2;
+    }
+    100% {
+        transform: scale(1.5);
+        opacity: 0.4;
+    }
+}
+
+@keyframes infiniteZoomMedium {
+    0% {
+        transform: scale(1);
+        opacity: 0.3;
+    }
+    50% {
+        opacity: 0.1;
+    }
+    100% {
+        transform: scale(1.8);
+        opacity: 0.3;
+    }
+}
+
+/* Grid ripple effect animation */
+@keyframes gridRippleEffect {
+    0% {
+        width: 0;
+        height: 0;
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.6;
+    }
+    100% {
+        width: 300px;
+        height: 300px;
+        opacity: 0;
+    }
+}
+
+/* Enhanced grid interaction effects */
+.infinite-grid:hover {
+    opacity: 0.8;
+}
+
+/* =============== MOBILE PERFORMANCE OPTIMIZATIONS =============== */
+
+/* Tablets and smaller screens */
+@media (max-width: 1024px) {
+    /* Reduce animation complexity */
+    .infinite-grid::before,
+    .infinite-grid::after {
+        display: none;
+    }
+    
+    /* Simplify particle effects */
+    .particles-container {
+        opacity: 0.3;
+    }
+    
+    /* Reduce geometric shapes */
+    .shape-4,
+    .shape-5 {
+        display: none;
+    }
+}
+
+/* Mobile devices */
+@media (max-width: 768px) {
+    /* Disable heavy background animations */
+    .infinite-grid {
+        animation: none !important;
+        background-size: 40px 40px;
+        opacity: 0.2;
+    }
+    
+    .infinite-grid::before,
+    .infinite-grid::after {
+        display: none !important;
+    }
+    
+    /* Disable mouse interactions on mobile */
+    .infinite-grid-container {
+        pointer-events: none;
+    }
+    
+    /* Simplify geometric shapes */
+    .geometric-shapes {
+        opacity: 0.3;
+    }
+    
+    .shape {
+        animation-duration: 40s !important;
+    }
+    
+    .shape-3,
+    .shape-4,
+    .shape-5 {
+        display: none;
+    }
+    
+    /* Disable particle animations */
+    .particles-container {
+        display: none !important;
+    }
+    
+    /* Reduce logo animations */
+    .navbar-logo {
+        animation: none !important;
+    }
+    
+    /* Simplify button effects */
+    .btn::before {
+        display: none;
+    }
+    
+    .btn:hover {
+        transform: none;
+        background: rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Disable complex hover effects */
+    .project-card:hover,
+    .certificate-card:hover,
+    .skill-item:hover {
+        transform: none !important;
+    }
+    
+    /* Reduce scrollbar complexity */
+    ::-webkit-scrollbar-track::before,
+    ::-webkit-scrollbar-track::after,
+    ::-webkit-scrollbar-thumb::before {
+        display: none;
+    }
+    
+    /* Disable touch effects on low-end devices */
+    .touch-ripple,
+    .touch-particle,
+    .touch-wave,
+    .touch-glow {
+        display: none !important;
+    }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+    /* Disable all background animations */
+    .infinite-grid-container {
+        display: none !important;
+    }
+    
+    .geometric-shapes {
+        display: none !important;
+    }
+    
+    /* Minimal animations only */
+    * {
+        animation-duration: 0.3s !important;
+        transition-duration: 0.2s !important;
+    }
+    
+    /* Disable all transform effects */
+    .home-stats .stat-item:hover,
+    .project-card:hover,
+    .certificate-card:hover,
+    .skill-item:hover,
+    .nav-link:hover {
+        transform: none !important;
+    }
+    
+    /* Disable wiggle animation */
+    .home-stats .stat-item {
+        animation: none !important;
+    }
+    
+    /* Simplify scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+        background: #1a1a1a;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: #64ffda;
+        border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: #0a0a0a;
+    }
 }
 
 /* Geometric Shapes Animation */
@@ -1469,12 +1833,34 @@ h1, h2, h3, h4, h5, h6 {
     backdrop-filter: blur(10px);
     transition: all 0.3s ease;
     box-sizing: border-box;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.home-stats .stat-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.home-stats .stat-item:hover::before {
+    left: 100%;
 }
 
 .home-stats .stat-item:hover {
-    transform: translateY(-5px);
     background: rgba(255, 255, 255, 0.1);
     border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 25px rgba(255, 255, 255, 0.1);
+}
+
+.home-stats .stat-item:active {
+    transform: translateY(-2px) scale(0.98);
 }
 
 .home-stats .stat-number {
@@ -1507,6 +1893,54 @@ h1, h2, h3, h4, h5, h6 {
     text-transform: uppercase;
     letter-spacing: 0.5px;
     font-weight: 400;
+}
+
+/* Wiggle animation for stat boxes */
+@keyframes wiggle {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(1deg); }
+    75% { transform: rotate(-1deg); }
+}
+
+@keyframes wiggleHover {
+    0%, 100% { transform: translateY(-5px) rotate(0deg); }
+    25% { transform: translateY(-5px) rotate(2deg); }
+    75% { transform: translateY(-5px) rotate(-2deg); }
+}
+
+.home-stats .stat-item {
+    animation: wiggle 3s ease-in-out infinite;
+    animation-delay: var(--wiggle-delay, 0s);
+}
+
+.home-stats .stat-item:hover {
+    animation: wiggleHover 0.5s ease-in-out infinite;
+}
+
+.home-stats .stat-item:nth-child(1) { --wiggle-delay: 0s; }
+.home-stats .stat-item:nth-child(2) { --wiggle-delay: 0.5s; }
+.home-stats .stat-item:nth-child(3) { --wiggle-delay: 1s; }
+.home-stats .stat-item:nth-child(4) { --wiggle-delay: 1.5s; }
+
+/* Mobile touch feedback */
+@media (max-width: 768px) {
+    .home-stats .stat-item {
+        padding: 1.2rem 0.8rem;
+        min-width: 140px;
+    }
+    
+    .home-stats .stat-item:active {
+        transform: scale(0.95);
+        background: rgba(255, 255, 255, 0.15);
+        animation: none;
+    }
+    
+    /* Reduce wiggle intensity on mobile */
+    @keyframes wiggle {
+        0%, 100% { transform: rotate(0deg); }
+        25% { transform: rotate(0.5deg); }
+        75% { transform: rotate(-0.5deg); }
+    }
 }
 
 /* Specific styles for achievement and cert stats */
@@ -3255,7 +3689,7 @@ h1, h2, h3, h4, h5, h6 {
     background: none !important;
     -webkit-text-fill-color: #ffffff !important;
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-    top: 105px !important;
+    top: 90px !important;
 }
 
 /* Milestone Cards */
