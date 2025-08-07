@@ -151,9 +151,12 @@ document.addEventListener('DOMContentLoaded', function() {
             grid.style.animationPlayState = 'running';
         });
         
-        // Click interaction - create ripple effect
+        // Click interaction - create ripple effect (disabled on smaller screens)
         homeSection.addEventListener('click', (e) => {
             if (e.target.closest('.home-content')) return; // Don't trigger on content clicks
+            
+            // Disable ripple effect on smaller screens (768px and below)
+            if (window.innerWidth <= 768) return;
             
             const rect = homeSection.getBoundingClientRect();
             const x = ((e.clientX - rect.left) / rect.width) * 100;
@@ -192,8 +195,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 const x = ((touch.clientX - rect.left) / rect.width) * 100;
                 const y = ((touch.clientY - rect.top) / rect.height) * 100;
                 
-                // Create subtle touch feedback
-                createGridRipple(x, y);
+                // Disable touch ripple feedback on smaller screens (768px and below)
+                if (window.innerWidth > 768) {
+                    createGridRipple(x, y);
+                }
             });
             
             homeSection.addEventListener('touchmove', (e) => {
@@ -760,7 +765,10 @@ document.addEventListener('DOMContentLoaded', function() {
             profileImg.addEventListener('mouseenter', () => {
                 profileImg.style.transform = 'scale(1.05)';
                 profileImg.style.filter = 'grayscale(50%) contrast(120%) brightness(120%)';
-                createImageRipple(profileImg);
+                // Create ripple effect (disabled on smaller screens)
+                if (window.innerWidth > 768) {
+                    createImageRipple(profileImg);
+                }
             });
             
             profileImg.addEventListener('mouseleave', () => {
@@ -820,8 +828,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Add click animation
                     item.style.transform = 'translateY(-5px) scale(0.95)';
                     
-                    // Create ripple effect
-                    createStatRipple(item, e);
+                    // Create ripple effect (disabled on smaller screens)
+                    if (window.innerWidth > 768) {
+                        createStatRipple(item, e);
+                    }
                     
                     // Navigate to section after animation
                     setTimeout(() => {
@@ -1801,8 +1811,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const buttons = document.querySelectorAll('.btn');
         
         buttons.forEach(button => {
-            // Add ripple effect on click
+            // Add ripple effect on click (disabled on smaller screens)
             button.addEventListener('click', function(e) {
+                // Disable ripple effect on smaller screens (768px and below)
+                if (window.innerWidth <= 768) return;
+                
                 const ripple = document.createElement('span');
                 const rect = this.getBoundingClientRect();
                 const size = Math.max(rect.width, rect.height);
@@ -2180,8 +2193,10 @@ function initOrbClickEffects() {
     orbs.forEach(orb => {
         orb.addEventListener('click', (e) => {
             e.stopPropagation();
-            // Create ripple effect from orb
-            createOrbRipple(e.target);
+            // Create ripple effect from orb (disabled on smaller screens)
+            if (window.innerWidth > 768) {
+                createOrbRipple(e.target);
+            }
             
             // Create burst particles
             createOrbBurst(e.clientX, e.clientY);
@@ -5546,185 +5561,3 @@ function createSocialHoverParticles(socialLink) {
     }
 }
 
-// Footer Particle System
-function initFooterParticleSystem() {
-    const footerParticles = document.querySelector('.footer-particles');
-    if (!footerParticles) return;
-    
-    // Add more dynamic particles
-    setInterval(() => {
-        if (Math.random() < 0.3) {
-            createFooterParticle(footerParticles);
-        }
-    }, 2000);
-}
-
-// Create footer particle
-function createFooterParticle(container) {
-    const particle = document.createElement('div');
-    particle.style.cssText = `
-        position: absolute;
-        width: 2px;
-        height: 2px;
-        background: rgba(100, 255, 218, 0.8);
-        border-radius: 50%;
-        left: ${Math.random() * 100}%;
-        bottom: 0;
-        pointer-events: none;
-        animation: floatFooterParticles ${8 + Math.random() * 4}s linear forwards;
-    `;
-    
-    container.appendChild(particle);
-    
-    setTimeout(() => {
-        particle.remove();
-    }, 12000);
-}
-
-// Dynamic Footer Background
-function initDynamicFooterBackground() {
-    const footer = document.querySelector('.footer.creative-footer');
-    if (!footer) return;
-    
-    // Add mouse move effect
-    footer.addEventListener('mousemove', (e) => {
-        const rect = footer.getBoundingClientRect();
-        const x = (e.clientX - rect.left) / rect.width;
-        const y = (e.clientY - rect.top) / rect.height;
-        
-        // Update gradient orbs position slightly
-        const orbs = footer.querySelectorAll('.orb');
-        orbs.forEach((orb, index) => {
-            const intensity = 10 + index * 5;
-            const offsetX = (x - 0.5) * intensity;
-            const offsetY = (y - 0.5) * intensity;
-            orb.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
-        });
-    });
-    
-    // Reset on mouse leave
-    footer.addEventListener('mouseleave', () => {
-        const orbs = footer.querySelectorAll('.orb');
-        orbs.forEach(orb => {
-            orb.style.transform = 'translate(0, 0)';
-        });
-    });
-}
-
-// Initialize footer on DOM load
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initCreativeFooter);
-} else {
-    initCreativeFooter();
-}
-
-console.log('🎨 Creative Interactive Footer Script Loaded Successfully!');
-
-
-
-// Touch Effects Controller for Mobile
-class TouchEffects {
-    constructor() {
-        this.isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-        this.longPressTimer = null;
-        this.longPressDelay = 500;
-        
-        if (this.isTouch) {
-            this.init();
-        }
-    }
-    
-    init() {
-        console.log('📱 Initializing Touch Effects...');
-        
-        // Touch start effects
-        document.addEventListener('touchstart', (e) => {
-            this.handleTouchStart(e);
-        }, { passive: true });
-        
-        // Touch end effects
-        document.addEventListener('touchend', (e) => {
-            this.handleTouchEnd(e);
-        }, { passive: true });
-        
-        // Touch move effects
-        document.addEventListener('touchmove', (e) => {
-            this.handleTouchMove(e);
-        }, { passive: true });
-        
-        // Add touch feedback classes to interactive elements
-        this.initTouchFeedback();
-        
-        console.log('✨ Touch Effects Initialized Successfully!');
-    }
-    
-    handleTouchStart(e) {
-        const touch = e.touches[0];
-        const x = touch.clientX;
-        const y = touch.clientY;
-        
-        // Create touch ripple
-        this.createTouchRipple(x, y);
-        
-        // Create touch glow
-        this.createTouchGlow(x, y);
-        
-        // Create touch particles
-        this.createTouchParticles(x, y);
-        
-        // Start long press timer
-        this.startLongPressTimer(e.target);
-    }
-    
-    handleTouchEnd(e) {
-        // Clear long press timer
-        this.clearLongPressTimer();
-        
-        // Remove active states
-        document.querySelectorAll('.touch-feedback.active').forEach(element => {
-            element.classList.remove('active');
-        });
-    }
-    
-    handleTouchMove(e) {
-        // Clear long press timer on move
-        this.clearLongPressTimer();
-        
-        const touch = e.touches[0];
-        const x = touch.clientX;
-        const y = touch.clientY;
-        
-        // Create subtle trail particles
-        if (Math.random() < 0.3) {
-            this.createTouchTrail(x, y);
-        }
-    }
-    
-    createTouchRipple(x, y) {
-        const ripple = document.createElement('div');
-        ripple.className = 'touch-ripple';
-        ripple.style.left = `${x}px`;
-        ripple.style.top = `${y}px`;
-        ripple.style.width = '20px';
-        ripple.style.height = '20px';
-        
-        document.body.appendChild(ripple);
-        
-        setTimeout(() => {
-            ripple.remove();
-        }, 800);
-    }
-    
-    createTouchGlow(x, y) {
-        const glow = document.createElement('div');
-        glow.className = 'touch-glow';
-        glow.style.left = `${x}px`;
-        glow.style.top = `${y}px`;
-        
-        document.body.appendChild(glow);
-        
-        setTimeout(() => {
-            glow.remove();
-        }, 1500);
-    }
-}

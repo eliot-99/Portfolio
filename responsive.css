@@ -50,6 +50,47 @@
     }
 }
 
+/* =============== HOME SECTION RIPPLE EFFECTS CONTROL =============== */
+/* Hide touch ripple effects on smaller screens for better mobile performance */
+
+/* Hide all ripple effects on mobile and tablet devices */
+@media (max-width: 768px) {
+    .grid-ripple,
+    .image-ripple,
+    .stat-ripple,
+    .orb-ripple {
+        display: none !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+    }
+    
+    /* Disable pointer events on home background for mobile */
+    .home-bg {
+        pointer-events: none !important;
+    }
+    
+    /* Re-enable pointer events for interactive content */
+    .home-content {
+        pointer-events: auto !important;
+    }
+    
+    /* Disable ripple animations on smaller screens */
+    @keyframes gridRippleEffect {
+        0%, 100% {
+            width: 0;
+            height: 0;
+            opacity: 0;
+        }
+    }
+    
+    @keyframes statRippleEffect {
+        0%, 100% {
+            transform: scale(0);
+            opacity: 0;
+        }
+    }
+}
+
 /* Ensure animations are visible on desktop */
 @media (min-width: 1025px) {
     .skills .skills-background,
