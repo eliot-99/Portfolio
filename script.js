@@ -202,11 +202,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             
             homeSection.addEventListener('touchmove', (e) => {
-                // Allow natural page scrolling on mobile devices
-                if (window.innerWidth <= 768) return;
-                
-                // On larger touch screens, keep the subtle grid parallax
-                e.preventDefault();
+                e.preventDefault(); // Prevent scrolling while touching grid
                 const touch = e.touches[0];
                 const rect = homeSection.getBoundingClientRect();
                 const touchX = (touch.clientX - rect.left) / rect.width;
@@ -3586,4 +3582,1982 @@ function initCreativeNavbar() {
     
     // Navigation system is handled above - no duplicate handlers needed
     
-    console.log('Creative navbar initializ
+    console.log('Creative navbar initialized successfully!');
+}
+
+// Creative Education Timeline Functions
+function initEducationTimeline() {
+    console.log('Initializing creative education timeline...');
+    
+    // Progress bar animation
+    const progressFill = document.getElementById('education-progress');
+    if (progressFill) {
+        // Animate progress to 75% (currently in 3rd year)
+        setTimeout(() => {
+            progressFill.style.width = '75%';
+        }, 1000);
+    } else {
+        console.log('Warning: Education progress bar not found');
+    }
+    
+    // Timeline milestone animations
+    const milestones = document.querySelectorAll('.timeline-milestone');
+    
+    const timelineObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate');
+                
+                // Add special animation for milestone cards
+                const card = entry.target.querySelector('.milestone-card');
+                if (card) {
+                    setTimeout(() => {
+                        card.style.transform = 'translateY(0)';
+                        card.style.opacity = '1';
+                    }, 300);
+                }
+                
+                timelineObserver.unobserve(entry.target);
+            }
+        });
+    }, {
+        threshold: 0.2,
+        rootMargin: '0px 0px -50px 0px'
+    });
+    
+    milestones.forEach(milestone => {
+        timelineObserver.observe(milestone);
+    });
+    
+    // Animate growth chart bars
+    const growthBars = document.querySelectorAll('.growth-bar');
+    
+    const growthObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const bars = entry.target.querySelectorAll('.growth-bar');
+                bars.forEach((bar, index) => {
+                    setTimeout(() => {
+                        const growth = bar.getAttribute('data-growth');
+                        bar.style.height = growth + '%';
+                    }, index * 200);
+                });
+                growthObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.5 });
+    
+    const growthChart = document.querySelector('.growth-chart');
+    if (growthChart) {
+        growthObserver.observe(growthChart);
+    }
+    
+    // Subject bubble interactions
+    const subjectBubbles = document.querySelectorAll('.subject-bubble');
+    
+    subjectBubbles.forEach(bubble => {
+        bubble.addEventListener('mouseenter', () => {
+            // Create ripple effect
+            const ripple = document.createElement('div');
+            ripple.style.cssText = `
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 0;
+                height: 0;
+                background: radial-gradient(circle, rgba(100, 255, 218, 0.3), transparent);
+                border-radius: 50%;
+                transform: translate(-50%, -50%);
+                animation: subjectRipple 0.6s ease-out;
+                pointer-events: none;
+                z-index: -1;
+            `;
+            
+            bubble.style.position = 'relative';
+            bubble.appendChild(ripple);
+            
+            setTimeout(() => {
+                if (bubble.contains(ripple)) {
+                    bubble.removeChild(ripple);
+                }
+            }, 600);
+        });
+    });
+    
+    // Milestone marker interactions
+    const milestoneMarkers = document.querySelectorAll('.milestone-marker');
+    
+    milestoneMarkers.forEach(marker => {
+        marker.addEventListener('mouseenter', () => {
+            // Enhance pulse animation
+            const pulse = marker.querySelector('.marker-pulse');
+            if (pulse) {
+                pulse.style.animation = 'markerPulse 1s ease-in-out infinite';
+            }
+        });
+        
+        marker.addEventListener('mouseleave', () => {
+            const pulse = marker.querySelector('.marker-pulse');
+            if (pulse) {
+                pulse.style.animation = 'markerPulse 3s ease-in-out infinite';
+            }
+        });
+    });
+    
+    // Dashboard insight cards animation
+    const insightCards = document.querySelectorAll('.insight-card');
+    
+    const insightObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+                setTimeout(() => {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }, index * 200);
+                insightObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.3 });
+    
+    insightCards.forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(30px)';
+        card.style.transition = 'all 0.6s cubic-bezier(0.23, 1, 0.32, 1)';
+        insightObserver.observe(card);
+    });
+    
+    // Add particle trail to timeline path
+    createTimelineParticles();
+    
+    console.log('Creative education timeline initialized successfully!');
+}
+
+// Timeline particle effects
+function createTimelineParticles() {
+    const timelinePath = document.querySelector('.path-line');
+    if (!timelinePath) return;
+    
+    setInterval(() => {
+        const particle = document.createElement('div');
+        particle.style.cssText = `
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: radial-gradient(circle, #64ffda, transparent);
+            border-radius: 50%;
+            left: 50%;
+            top: 0;
+            transform: translateX(-50%);
+            animation: timelineParticleMove 3s ease-in-out forwards;
+            pointer-events: none;
+            z-index: 1;
+        `;
+        
+        timelinePath.appendChild(particle);
+        
+        setTimeout(() => {
+            if (timelinePath.contains(particle)) {
+                timelinePath.removeChild(particle);
+            }
+        }, 3000);
+        
+    }, 2000);
+}
+
+// CSS Animations added via JavaScript
+const additionalStyles = `
+@keyframes subjectRipple {
+    0% { width: 0; height: 0; opacity: 1; }
+    100% { width: 60px; height: 60px; opacity: 0; }
+}
+
+@keyframes timelineParticleMove {
+    0% { 
+        top: 0; 
+        opacity: 0; 
+        transform: translateX(-50%) scale(0.5);
+    }
+    20% { 
+        opacity: 1; 
+        transform: translateX(-50%) scale(1);
+    }
+    80% { 
+        opacity: 1; 
+        transform: translateX(-50%) scale(1);
+    }
+    100% { 
+        top: 100%; 
+        opacity: 0; 
+        transform: translateX(-50%) scale(0.5);
+    }
+}
+@keyframes badgeBounce {
+    0%, 100% { transform: scale(1) rotateY(0deg); }
+    25% { transform: scale(1.2) rotateY(90deg); }
+    75% { transform: scale(1.1) rotateY(270deg); }
+}
+
+@keyframes extraFloat {
+    0% { transform: translateY(0px); }
+    100% { transform: translateY(-15px); }
+}
+`;
+
+// Inject additional styles
+const styleSheet = document.createElement('style');
+styleSheet.textContent = additionalStyles;
+document.head.appendChild(styleSheet);
+
+// Interactive Background System
+function initInteractiveBackground() {
+    const canvas = document.getElementById('particleCanvas');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    let mouse = { x: 0, y: 0 };
+    let connectionLines = [];
+
+    // Canvas setup
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Particle class
+    class Particle {
+        constructor() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.vx = (Math.random() - 0.5) * 0.5;
+            this.vy = (Math.random() - 0.5) * 0.5;
+            this.size = Math.random() * 2 + 1;
+            this.opacity = Math.random() * 0.5 + 0.2;
+            this.pulse = Math.random() * 0.02 + 0.01;
+            this.pulseDirection = 1;
+        }
+
+        update() {
+            this.x += this.vx;
+            this.y += this.vy;
+
+            // Bounce off edges
+            if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+            if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+
+            // Pulse effect
+            this.opacity += this.pulse * this.pulseDirection;
+            if (this.opacity >= 0.7 || this.opacity <= 0.1) {
+                this.pulseDirection *= -1;
+            }
+
+            // Attract to mouse
+            const dx = mouse.x - this.x;
+            const dy = mouse.y - this.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance < 150) {
+                const force = (150 - distance) / 150;
+                this.vx += dx * force * 0.0001;
+                this.vy += dy * force * 0.0001;
+            }
+        }
+
+        draw() {
+            ctx.save();
+            ctx.globalAlpha = this.opacity;
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, Math.max(0.5, this.size), 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Add glow effect
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = '#00ffff';
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, Math.max(0.2, this.size * 0.5), 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+    }
+
+    // Create particles
+    function createParticles() {
+        particles = [];
+        const particleCount = Math.min(50, Math.floor(canvas.width * canvas.height / 15000));
+        
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+        }
+    }
+
+    // Draw connections
+    function drawConnections() {
+        particles.forEach((particle, i) => {
+            // Connect to nearby particles
+            for (let j = i + 1; j < particles.length; j++) {
+                const dx = particles[j].x - particle.x;
+                const dy = particles[j].y - particle.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < 100) {
+                    ctx.save();
+                    const opacity = (100 - distance) / 100 * 0.2;
+                    ctx.globalAlpha = opacity;
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 0.5;
+                    ctx.beginPath();
+                    ctx.moveTo(particle.x, particle.y);
+                    ctx.lineTo(particles[j].x, particles[j].y);
+                    ctx.stroke();
+                    ctx.restore();
+                }
+            }
+
+            // Connect to mouse
+            const dx = mouse.x - particle.x;
+            const dy = mouse.y - particle.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < 120) {
+                ctx.save();
+                const opacity = (120 - distance) / 120 * 0.4;
+                ctx.globalAlpha = opacity;
+                ctx.strokeStyle = '#00ffff';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(particle.x, particle.y);
+                ctx.lineTo(mouse.x, mouse.y);
+                ctx.stroke();
+                ctx.restore();
+            }
+        });
+    }
+
+    // Animation loop
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        particles.forEach(particle => {
+            particle.update();
+            particle.draw();
+        });
+
+        drawConnections();
+        requestAnimationFrame(animate);
+    }
+
+    // Mouse movement
+    canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        mouse.x = e.clientX - rect.left;
+        mouse.y = e.clientY - rect.top;
+    });
+
+    // Touch support
+    canvas.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        const touch = e.touches[0];
+        mouse.x = touch.clientX - rect.left;
+        mouse.y = touch.clientY - rect.top;
+    });
+
+    // Initialize
+    createParticles();
+    animate();
+
+    // Grid interaction
+    const techGrid = document.querySelector('.tech-grid');
+    if (techGrid) {
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / canvas.width) * 100;
+            const y = ((e.clientY - rect.top) / canvas.height) * 100;
+            
+            techGrid.style.background = `
+                linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+                radial-gradient(circle at ${x}% ${y}%, rgba(0, 255, 255, 0.1) 0%, transparent 50%)
+            `;
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            techGrid.style.background = `
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px)
+            `;
+        });
+    }
+}
+
+// Projects Interactive Background System
+function initProjectsInteractiveBackground() {
+    const canvas = document.getElementById('projectsCanvas');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    let codeParticles = [];
+    let dataNodes = [];
+    let mouse = { x: 0, y: 0 };
+
+    // Canvas setup
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Code Particle class
+    class CodeParticle {
+        constructor() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.vx = (Math.random() - 0.5) * 0.3;
+            this.vy = (Math.random() - 0.5) * 0.3;
+            this.size = Math.random() * 3 + 1;
+            this.opacity = Math.random() * 0.6 + 0.2;
+            this.color = Math.random() > 0.5 ? '#666666' : '#888888';
+            this.shape = Math.floor(Math.random() * 3); // 0: circle, 1: square, 2: triangle
+        }
+
+        update() {
+            this.x += this.vx;
+            this.y += this.vy;
+
+            // Bounce off edges
+            if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+            if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+
+            // Mouse attraction
+            const dx = mouse.x - this.x;
+            const dy = mouse.y - this.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance < 100) {
+                const force = (100 - distance) / 100;
+                this.vx += dx * force * 0.0002;
+                this.vy += dy * force * 0.0002;
+            }
+        }
+
+        draw() {
+            ctx.save();
+            ctx.globalAlpha = this.opacity;
+            ctx.fillStyle = this.color;
+            
+            if (this.shape === 0) {
+                // Circle
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, Math.max(0.5, this.size), 0, Math.PI * 2);
+                ctx.fill();
+            } else if (this.shape === 1) {
+                // Square
+                ctx.fillRect(this.x - this.size/2, this.y - this.size/2, this.size, this.size);
+            } else {
+                // Triangle
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y - this.size);
+                ctx.lineTo(this.x - this.size, this.y + this.size);
+                ctx.lineTo(this.x + this.size, this.y + this.size);
+                ctx.closePath();
+                ctx.fill();
+            }
+            
+            ctx.restore();
+        }
+    }
+
+    // Data Node class
+    class DataNode {
+        constructor() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.size = Math.random() * 4 + 2;
+            this.pulseSpeed = Math.random() * 0.05 + 0.02;
+            this.pulse = 0;
+            this.connections = [];
+        }
+
+        update() {
+            this.pulse += this.pulseSpeed;
+        }
+
+        draw() {
+            ctx.save();
+            
+            // Main node
+            const pulseSize = Math.max(0.5, this.size + Math.sin(this.pulse) * 2);
+            ctx.globalAlpha = 0.6;
+            ctx.fillStyle = '#777777';
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, pulseSize, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Outer ring
+            ctx.globalAlpha = 0.2;
+            ctx.strokeStyle = '#555555';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, Math.max(1, pulseSize + 5), 0, Math.PI * 2);
+            ctx.stroke();
+            
+            ctx.restore();
+        }
+    }
+
+    // Create particles and nodes
+    function createParticles() {
+        codeParticles = [];
+        dataNodes = [];
+        
+        const particleCount = Math.min(30, Math.floor(canvas.width * canvas.height / 20000));
+        const nodeCount = Math.min(8, Math.floor(canvas.width * canvas.height / 80000));
+        
+        for (let i = 0; i < particleCount; i++) {
+            codeParticles.push(new CodeParticle());
+        }
+        
+        for (let i = 0; i < nodeCount; i++) {
+            dataNodes.push(new DataNode());
+        }
+    }
+
+    // Draw connections between nodes
+    function drawConnections() {
+        dataNodes.forEach((node, i) => {
+            for (let j = i + 1; j < dataNodes.length; j++) {
+                const dx = dataNodes[j].x - node.x;
+                const dy = dataNodes[j].y - node.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < 200) {
+                    ctx.save();
+                    const opacity = (200 - distance) / 200 * 0.3;
+                    ctx.globalAlpha = opacity;
+                    ctx.strokeStyle = '#555555';
+                    ctx.lineWidth = 1;
+                    ctx.setLineDash([5, 10]);
+                    ctx.beginPath();
+                    ctx.moveTo(node.x, node.y);
+                    ctx.lineTo(dataNodes[j].x, dataNodes[j].y);
+                    ctx.stroke();
+                    ctx.restore();
+                }
+            }
+        });
+    }
+
+    // Draw data streams
+    function drawDataStreams() {
+        const time = Date.now() * 0.001;
+        
+        for (let i = 0; i < 5; i++) {
+            const x = (i / 4) * canvas.width;
+            const streamHeight = Math.sin(time + i) * 20 + 30;
+            
+            ctx.save();
+            ctx.globalAlpha = 0.4;
+            ctx.strokeStyle = '#444444';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([10, 5]);
+            ctx.lineDashOffset = -time * 50;
+            
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, streamHeight);
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.moveTo(x, canvas.height - streamHeight);
+            ctx.lineTo(x, canvas.height);
+            ctx.stroke();
+            
+            ctx.restore();
+        }
+    }
+
+    // Animation loop
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw data streams
+        drawDataStreams();
+        
+        // Update and draw particles
+        codeParticles.forEach(particle => {
+            particle.update();
+            particle.draw();
+        });
+
+        // Update and draw nodes
+        dataNodes.forEach(node => {
+            node.update();
+            node.draw();
+        });
+
+        // Draw connections
+        drawConnections();
+
+        requestAnimationFrame(animate);
+    }
+
+    // Mouse events
+    canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        mouse.x = e.clientX - rect.left;
+        mouse.y = e.clientY - rect.top;
+    });
+
+    // Touch events
+    canvas.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        const touch = e.touches[0];
+        mouse.x = touch.clientX - rect.left;
+        mouse.y = touch.clientY - rect.top;
+    });
+
+    // Initialize
+    createParticles();
+    animate();
+
+    // Project card interactions
+    const projectCards = document.querySelectorAll('.project-card');
+    projectCards.forEach((card, index) => {
+        card.addEventListener('mouseenter', () => {
+            // Create particle burst effect
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const particle = new CodeParticle();
+                    particle.x = Math.random() * canvas.width;
+                    particle.y = Math.random() * canvas.height;
+                    particle.color = '#777777';
+                    particle.size = 3;
+                    codeParticles.push(particle);
+                    
+                    // Remove after animation
+                    setTimeout(() => {
+                        const idx = codeParticles.indexOf(particle);
+                        if (idx > -1) codeParticles.splice(idx, 1);
+                    }, 3000);
+                }, i * 100);
+            }
+        });
+    });
+
+    // Stats animation for projects section
+    const projectsSection = document.querySelector('.projects');
+    const statNumbers = document.querySelectorAll('.projects-stats .stat-number');
+    
+    const projectsObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                statNumbers.forEach(stat => {
+                    const target = parseInt(stat.getAttribute('data-target'));
+                    const duration = 2000;
+                    const increment = target / (duration / 16);
+                    let current = 0;
+
+                    const updateStat = () => {
+                        current += increment;
+                        if (current >= target) {
+                            stat.textContent = target + (target === 85 ? '%' : '');
+                        } else {
+                            stat.textContent = Math.floor(current);
+                            requestAnimationFrame(updateStat);
+                        }
+                    };
+
+                    updateStat();
+                });
+                projectsObserver.unobserve(projectsSection);
+            }
+        });
+    }, { threshold: 0.3 });
+
+    if (projectsSection) projectsObserver.observe(projectsSection);
+}
+
+// REVOLUTIONARY CREATIVE UNIVERSE SYSTEM
+function initCreativeUniverse() {
+    console.log('Initializing Creative Universe...');
+    const canvas = document.getElementById('universeCanvas');
+    if (!canvas) {
+        console.log('Warning: Universe canvas not found');
+        return;
+    }
+
+    const ctx = canvas.getContext('2d');
+    let universeParticles = [];
+    let neuralNodes = [];
+    let energyWaves = [];
+    let mouse = { x: 0, y: 0 };
+    let time = 0;
+
+    // Canvas setup
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Universe Particle class
+    class UniverseParticle {
+        constructor() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.vx = (Math.random() - 0.5) * 0.5;
+            this.vy = (Math.random() - 0.5) * 0.5;
+            this.size = Math.random() * 3 + 1;
+            this.opacity = Math.random() * 0.8 + 0.2;
+            this.color = this.getRandomColor();
+            this.trail = [];
+            this.maxTrail = 8;
+            this.energy = Math.random() * 100;
+            this.frequency = Math.random() * 0.02 + 0.01;
+        }
+
+        getRandomColor() {
+            const colors = ['#ffffff', '#f8f8ff', '#e6e6fa', '#dcdcdc'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        update() {
+            // Store trail with energy
+            this.trail.push({ 
+                x: this.x, 
+                y: this.y, 
+                energy: this.energy 
+            });
+            if (this.trail.length > this.maxTrail) {
+                this.trail.shift();
+            }
+
+            // Energy-based movement
+            this.energy += Math.sin(time * this.frequency) * 2;
+            this.x += this.vx + Math.sin(this.energy * 0.01) * 0.5;
+            this.y += this.vy + Math.cos(this.energy * 0.01) * 0.5;
+
+            // Quantum tunneling effect
+            if (this.x < -50) this.x = canvas.width + 50;
+            if (this.x > canvas.width + 50) this.x = -50;
+            if (this.y < -50) this.y = canvas.height + 50;
+            if (this.y > canvas.height + 50) this.y = -50;
+
+            // Mouse quantum entanglement
+            const dx = mouse.x - this.x;
+            const dy = mouse.y - this.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance < 150) {
+                const force = (150 - distance) / 150;
+                this.vx += dx * force * 0.0005;
+                this.vy += dy * force * 0.0005;
+                this.energy += force * 10;
+            }
+        }
+
+        draw() {
+            // Draw quantum trail
+            this.trail.forEach((point, index) => {
+                ctx.save();
+                const alpha = (index / this.trail.length) * this.opacity * 0.4;
+                ctx.globalAlpha = alpha;
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = this.color;
+                ctx.beginPath();
+                ctx.arc(point.x, point.y, Math.max(0.3, this.size * 0.6), 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            });
+
+            // Draw main particle with energy field
+            ctx.save();
+            ctx.globalAlpha = this.opacity;
+            
+            // Energy field
+            const energyRadius = Math.max(0.5, this.size + Math.sin(this.energy * 0.05) * 3);
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = this.color;
+            ctx.fillStyle = this.color;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, energyRadius, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Core particle
+            ctx.shadowBlur = 5;
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, Math.max(0.2, this.size * 0.5), 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+    }
+
+    // Neural Node class
+    class NeuralNode {
+        constructor() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.size = Math.random() * 6 + 3;
+            this.pulseSpeed = Math.random() * 0.03 + 0.01;
+            this.pulse = 0;
+            this.connections = [];
+            this.energy = 0;
+        }
+
+        update() {
+            this.pulse += this.pulseSpeed;
+            this.energy = Math.sin(this.pulse) * 50 + 50;
+        }
+
+        draw() {
+            ctx.save();
+            
+            // Neural core
+            const pulseSize = Math.max(0.5, this.size + Math.sin(this.pulse) * 3);
+            ctx.globalAlpha = 0.8;
+            ctx.fillStyle = '#ffffff';
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, pulseSize, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Energy rings
+            for (let i = 1; i <= 3; i++) {
+                ctx.globalAlpha = 0.3 / i;
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, Math.max(1, pulseSize + (i * 10)), 0, Math.PI * 2);
+                ctx.stroke();
+            }
+            
+            ctx.restore();
+        }
+    }
+
+    // Energy Wave class
+    class EnergyWave {
+        constructor() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.radius = 0;
+            this.maxRadius = Math.random() * 200 + 100;
+            this.speed = Math.random() * 2 + 1;
+            this.opacity = 1;
+        }
+
+        update() {
+            this.radius += this.speed;
+            this.opacity = 1 - (this.radius / this.maxRadius);
+            
+            if (this.radius >= this.maxRadius) {
+                this.radius = 0;
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.opacity = 1;
+            }
+        }
+
+        draw() {
+            ctx.save();
+            ctx.globalAlpha = this.opacity * 0.3;
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 10]);
+            ctx.lineDashOffset = -time * 0.1;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, Math.max(1, this.radius), 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
+        }
+    }
+
+    // Create universe elements
+    function createUniverse() {
+        universeParticles = [];
+        neuralNodes = [];
+        energyWaves = [];
+        
+        const particleCount = Math.min(40, Math.floor(canvas.width * canvas.height / 20000));
+        const nodeCount = Math.min(12, Math.floor(canvas.width * canvas.height / 60000));
+        const waveCount = 5;
+        
+        for (let i = 0; i < particleCount; i++) {
+            universeParticles.push(new UniverseParticle());
+        }
+        
+        for (let i = 0; i < nodeCount; i++) {
+            neuralNodes.push(new NeuralNode());
+        }
+        
+        for (let i = 0; i < waveCount; i++) {
+            energyWaves.push(new EnergyWave());
+        }
+    }
+
+    // Draw neural connections
+    function drawNeuralConnections() {
+        neuralNodes.forEach((node, i) => {
+            for (let j = i + 1; j < neuralNodes.length; j++) {
+                const dx = neuralNodes[j].x - node.x;
+                const dy = neuralNodes[j].y - node.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < 250) {
+                    ctx.save();
+                    const opacity = (250 - distance) / 250 * 0.4;
+                    ctx.globalAlpha = opacity;
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 1;
+                    ctx.setLineDash([3, 6]);
+                    ctx.lineDashOffset = -time * 0.05;
+                    ctx.beginPath();
+                    ctx.moveTo(node.x, node.y);
+                    ctx.lineTo(neuralNodes[j].x, neuralNodes[j].y);
+                    ctx.stroke();
+                    ctx.restore();
+                }
+            }
+        });
+    }
+
+    // Draw quantum field
+    function drawQuantumField() {
+        const fieldTime = time * 0.01;
+        
+        for (let x = 0; x < canvas.width; x += 100) {
+            for (let y = 0; y < canvas.height; y += 100) {
+                const wave = Math.sin(x * 0.01 + fieldTime) * Math.cos(y * 0.01 + fieldTime);
+                const intensity = (wave + 1) * 0.5;
+                
+                ctx.save();
+                ctx.globalAlpha = intensity * 0.1;
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(x, y, 2, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+    }
+
+    // Animation loop
+    function animate() {
+        try {
+            time += 1;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw quantum field
+        drawQuantumField();
+        
+        // Update and draw energy waves
+        energyWaves.forEach(wave => {
+            wave.update();
+            wave.draw();
+        });
+
+        // Update and draw particles with safety checks
+        universeParticles.forEach((particle, index) => {
+            try {
+                // Safety check for particle properties
+                if (particle.size <= 0) particle.size = 1;
+                if (particle.opacity < 0) particle.opacity = 0;
+                if (particle.opacity > 1) particle.opacity = 1;
+                
+                particle.update();
+                particle.draw();
+            } catch (error) {
+                console.warn('Particle error:', error, 'Removing particle at index:', index);
+                // Remove problematic particle
+                universeParticles.splice(index, 1);
+            }
+        });
+
+        // Update and draw neural nodes
+        neuralNodes.forEach(node => {
+            try {
+                node.update();
+                node.draw();
+            } catch (error) {
+                console.warn('Neural node error:', error);
+            }
+        });
+
+        // Draw neural connections
+        drawNeuralConnections();
+
+            requestAnimationFrame(animate);
+        } catch (error) {
+            console.error('Animation error:', error);
+            // Continue animation even if there's an error
+            setTimeout(() => requestAnimationFrame(animate), 100);
+        }
+    }
+
+    // Mouse events
+    canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        mouse.x = e.clientX - rect.left;
+        mouse.y = e.clientY - rect.top;
+    });
+
+    // Touch events
+    canvas.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        const touch = e.touches[0];
+        mouse.x = touch.clientX - rect.left;
+        mouse.y = touch.clientY - rect.top;
+    });
+
+    // Disable complex canvas animation for better performance
+    console.log('Canvas animation disabled - using CSS animations instead');
+
+    // Ensure the first dimension space is visible on load
+    setTimeout(() => {
+        const firstDimensionSpace = document.querySelector('.dimension-space.active');
+        if (firstDimensionSpace) {
+            firstDimensionSpace.style.opacity = '1';
+            firstDimensionSpace.style.display = 'block';
+            console.log('Creative universe gallery initialized successfully!');
+        } else {
+            console.log('Warning: No active dimension space found');
+        }
+    }, 500);
+
+    // Dimension switching functionality
+    const dimensionTabs = document.querySelectorAll('.dimension-tab');
+    const dimensionSpaces = document.querySelectorAll('.dimension-space');
+
+    console.log('Found dimension tabs:', dimensionTabs.length);
+    console.log('Found dimension spaces:', dimensionSpaces.length);
+
+    dimensionTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const dimension = tab.getAttribute('data-dimension');
+            console.log('Switching to dimension:', dimension);
+            
+            // Update active tab
+            dimensionTabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            
+            // Update active dimension space
+            dimensionSpaces.forEach(space => {
+                space.classList.remove('active');
+                space.style.opacity = '0';
+                space.style.display = 'none';
+                if (space.getAttribute('data-space') === dimension) {
+                    space.classList.add('active');
+                    space.style.display = 'block';
+                    setTimeout(() => {
+                        space.style.opacity = '1';
+                    }, 100);
+                }
+            });
+
+            // Create universe explosion effect
+            for (let i = 0; i < 15; i++) {
+                setTimeout(() => {
+                    const particle = new UniverseParticle();
+                    particle.x = mouse.x || canvas.width / 2;
+                    particle.y = mouse.y || canvas.height / 2;
+                    particle.size = 6;
+                    particle.opacity = 1;
+                    particle.energy = 200;
+                    universeParticles.push(particle);
+                    
+                    // Remove after animation
+                    setTimeout(() => {
+                        const idx = universeParticles.indexOf(particle);
+                        if (idx > -1) universeParticles.splice(idx, 1);
+                    }, 3000);
+                }, i * 50);
+            }
+        });
+    });
+
+    // Holo card interactions
+    const holoCards = document.querySelectorAll('.holo-card');
+    holoCards.forEach(card => {
+        card.addEventListener('mouseenter', () => {
+            // Create quantum burst effect
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const wave = new EnergyWave();
+                    wave.x = Math.random() * canvas.width;
+                    wave.y = Math.random() * canvas.height;
+                    wave.maxRadius = 150;
+                    energyWaves.push(wave);
+                    
+                    setTimeout(() => {
+                        const idx = energyWaves.indexOf(wave);
+                        if (idx > -1) energyWaves.splice(idx, 1);
+                    }, 2000);
+                }, i * 100);
+            }
+        });
+    });
+
+    // MONOCHROMATIC PORTFOLIO SHOWCASE
+    console.log('🎨 Initializing Monochromatic Portfolio...');
+    
+    const imageRing = document.getElementById('imageRing');
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const loadMoreBtn = document.getElementById('loadMoreBtn');
+    
+    if (imageRing) {
+        console.log('✅ Portfolio grid element found!');
+        
+        // Portfolio data with proper categorization
+        const portfolioItems = [
+            { 
+                src: 'assets/My Designs/dirrection.png', 
+                title: 'URECKON Event Poster', 
+                category: 'design',
+                type: 'Event Design'
+            },
+            { 
+                src: 'assets/My Designs/TShirt Design Competition Poster 2025 final.png', 
+                title: 'T-Shirt Design Competition', 
+                category: 'design',
+                type: 'Competition Poster'
+            },
+            { 
+                src: 'assets/My Designs/LM10.png', 
+                title: 'Messi Poster', 
+                category: 'design',
+                type: 'Concept Poster'
+            },
+            { 
+                src: 'assets/My Designs/Trap Poster.png', 
+                title: 'Trap Music Event', 
+                category: 'branding',
+                type: 'Music Poster'
+            },
+            { 
+                src: 'assets/My Designs/Ananya  Chakraborty And The Bohemian Baul.png', 
+                title: 'Ananya Chakraborty And The Bohemian Baul', 
+                category: 'branding',
+                type: 'Music Poster'
+            },
+            { 
+                src: 'assets/My Designs/through the lens.png', 
+                title: 'Through The Lens', 
+                category: 'design',
+                type: 'Photography Event'
+            },
+            { 
+                src: 'assets/My Designs/Star Sprint AstroNomical Quiz Compedition-2.png', 
+                title: 'Astronomy Quiz Competition', 
+                category: 'design',
+                type: 'Educational Event'
+            },
+            { 
+                src: 'assets/My Designs/Subho_Bijoya_poster_var_2_Saptarshi_Ghosh.png', 
+                title: 'Subho Bijoya Poster', 
+                category: 'design',
+                type: 'Social Event'
+            },
+            { 
+                src: 'assets/My Designs/Professor sonku o ufo - Saptarshi Ghosh_6296770327.png', 
+                title: 'Professor Sonku O Ufo', 
+                category: 'design',
+                type: 'Concept Poster'
+            },
+            { 
+                src: 'assets/My Designs/RG KAR CASE POSTER.png', 
+                title: 'Social Justice Campaign', 
+                category: 'design',
+                type: 'Awareness Poster'
+            },
+            { 
+                src: 'assets/My Designs/Shawarma.png', 
+                title: 'Shawarma Design', 
+                category: 'branding',
+                type: 'Food Branding'
+            },
+            { 
+                src: 'assets/My Designs/Momo.png', 
+                title: 'Momo Design', 
+                category: 'branding',
+                type: 'Food Branding'
+            },
+            { 
+                src: 'assets/My Designs/Red Velvet Shake.png', 
+                title: 'Red Velvet Shake', 
+                category: 'branding',
+                type: 'Beverage Design'
+            },
+            { 
+                src: 'assets/My Designs/Cold Coffee.png', 
+                title: 'Cold Coffee', 
+                category: 'branding',
+                type: 'Beverage Design'
+            },
+            { 
+                src: 'assets/My Designs/BGMI 1ST page.png', 
+                title: 'BGMI', 
+                category: 'branding',
+                type: 'Gaming Event'
+            },
+            { 
+                src: 'assets/My Designs/Auto expo poster.png', 
+                title: 'Auto Expo', 
+                category: 'branding',
+                type: 'Auto Expo Event'
+            },
+            { 
+                src: 'assets/Photograph/SSP_0811 - Copy.jpg', 
+                title: 'Street Photography', 
+                category: 'photography',
+                type: 'Daily Life'
+            },
+            { 
+                src: 'assets/Photograph/SSP_0189.jpg', 
+                title: 'A Smiling Baba ', 
+                category: 'photography',
+                type: 'Portrait Photography'
+            },
+            { 
+                src: 'assets/Photograph/SSP_0171_bird.jpg', 
+                title: 'Bird Portrait', 
+                category: 'photography',
+                type: 'Wildlife Photography'
+            },
+            { 
+                src: 'assets/Photograph/bird-7.jpg', 
+                title: 'Avian Beauty', 
+                category: 'photography',
+                type: 'Wildlife Photography'
+            },
+            { 
+                src: 'assets/Photograph/SSP_0198_k.jpg', 
+                title: 'Maa er agomon', 
+                category: 'photography',
+                type: 'Street Photography'
+            },
+            { 
+                src: 'assets/Photograph/IMG_20250501_194033188.jpg', 
+                title: 'Lightning', 
+                category: 'photography',
+                type: 'Nature Photography'
+            },
+            { 
+                src: 'assets/Photograph/PXL_20230309_173251751.jpg', 
+                title: 'Bee', 
+                category: 'photography',
+                type: 'Macro Photography'
+            },
+            { 
+                src: 'assets/Photograph/SSP_0045_moon.jpg', 
+                title: 'Moon', 
+                category: 'photography',
+                type: 'Moon Photography'
+            }
+            ,
+            { 
+                src: 'assets/Photograph/235841431_323931962849018_2076678060919381447_n.jpg', 
+                title: 'Spider', 
+                category: 'photography',
+                type: 'Macro Photography'
+            }
+            ,
+            { 
+                src: 'assets/Photograph/daily-life-6.jpg', 
+                title: 'Life struggle in mountains', 
+                category: 'photography',
+                type: 'Daily Life'
+            }
+            ,
+            { 
+                src: 'assets/Photograph/DSC_0090_monkey.jpg', 
+                title: 'Monkey', 
+                category: 'photography',
+                type: 'Wildlife'
+            }
+            ,
+            { 
+                src: 'assets/Photograph/SSP_0063_k.jpg', 
+                title: 'Offering of the Eyes of Maa', 
+                category: 'photography',
+                type: 'Daily Life'
+            }
+            ,
+            { 
+                src: 'assets/Photograph/SSP_0224.JPG', 
+                title: 'The Owl', 
+                category: 'photography',
+                type: 'Wildlife'
+            }
+            ,
+            { 
+                src: 'assets/Photograph/SSP_0328.jpg', 
+                title: 'The bird', 
+                category: 'photography',
+                type: 'Wildlife'
+            }
+            ,
+            { 
+                src: 'assets/Photograph/SSP_0742_dec.jpg', 
+                title: 'The bird taking flight', 
+                category: 'photography',
+                type: 'Wildlife'
+            }
+            ,
+            { 
+                src: 'assets/Photograph/SSP_0298.jpg', 
+                title: 'The boat in Ganges', 
+                category: 'photography',
+                type: 'Landscape'
+            }
+        ];
+
+        let currentFilter = 'all';
+        let visibleItems = 8; // Start with 8 items
+        let allItems = [];
+
+        // Create portfolio item element
+        function createPortfolioItem(item, index) {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'ring-image';
+            itemDiv.setAttribute('data-category', item.category);
+            itemDiv.style.opacity = '0';
+            itemDiv.style.transform = 'translateY(30px)';
+            
+            // Create image
+            const img = document.createElement('img');
+            img.className = 'portfolio-image';
+            img.src = item.src;
+            img.alt = item.title;
+            img.loading = 'lazy';
+            
+            // Create category badge
+            const badge = document.createElement('div');
+            badge.className = 'category-badge';
+            badge.textContent = item.type;
+            
+            // Create info overlay
+            const infoDiv = document.createElement('div');
+            infoDiv.className = 'ring-image-info';
+            infoDiv.innerHTML = `
+                <div class="image-title">${item.title}</div>
+                <div class="image-category">${item.type}</div>
+            `;
+            
+            itemDiv.appendChild(img);
+            itemDiv.appendChild(badge);
+            itemDiv.appendChild(infoDiv);
+            
+            // Add click handler
+            itemDiv.addEventListener('click', () => {
+                console.log(`🖼️ Viewing: ${item.title} - ${item.type}`);
+                
+                // Add click animation
+                itemDiv.style.transform = 'translateY(-5px) scale(0.98)';
+                setTimeout(() => {
+                    itemDiv.style.transform = 'translateY(-10px) scale(1)';
+                }, 150);
+            });
+            
+            // Add entrance animation and staggered shine delay
+            setTimeout(() => {
+                itemDiv.style.transition = 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                itemDiv.style.opacity = '1';
+                itemDiv.style.transform = 'translateY(0)';
+                
+                // Add staggered animation delay for shine effects
+                const shineDelay = (index * 0.5) + 's';
+                itemDiv.style.setProperty('--shine-delay', shineDelay);
+                itemDiv.style.animationDelay = shineDelay;
+                
+                // Set image shine delay
+                const img = itemDiv.querySelector('.portfolio-image');
+                if (img) {
+                    img.style.setProperty('--image-shine-delay', (index * 0.7) + 's');
+                }
+            }, index * 100);
+            
+            allItems.push(itemDiv);
+            return itemDiv;
+        }
+
+        // Render portfolio items
+        function renderPortfolio(filter = 'all') {
+            imageRing.innerHTML = '';
+            
+            const filteredItems = filter === 'all' 
+                ? portfolioItems 
+                : portfolioItems.filter(item => item.category === filter);
+            
+            const itemsToShow = filteredItems.slice(0, visibleItems);
+            
+            itemsToShow.forEach((item, index) => {
+                const itemElement = createPortfolioItem(item, index);
+                imageRing.appendChild(itemElement);
+            });
+            
+            // Update load more button
+            if (filteredItems.length > visibleItems) {
+                loadMoreBtn.style.display = 'inline-block';
+                loadMoreBtn.textContent = `View More Work (${filteredItems.length - visibleItems} remaining)`;
+            } else {
+                loadMoreBtn.style.display = 'none';
+            }
+            
+            console.log(`📊 Rendered ${itemsToShow.length} items (filter: ${filter})`);
+        }
+
+        // Filter functionality
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Update active button
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                // Get filter value
+                currentFilter = btn.getAttribute('data-filter');
+                visibleItems = 8; // Reset visible items
+                
+                // Add loading effect
+                imageRing.style.opacity = '0.5';
+                imageRing.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    renderPortfolio(currentFilter);
+                    imageRing.style.opacity = '1';
+                    imageRing.style.transform = 'translateY(0)';
+                }, 300);
+                
+                console.log(`🔍 Filter changed to: ${currentFilter}`);
+            });
+        });
+
+        // Load more functionality
+        if (loadMoreBtn) {
+            loadMoreBtn.addEventListener('click', () => {
+                visibleItems += 6; // Show 6 more items
+                
+                // Add loading animation
+                loadMoreBtn.style.opacity = '0.5';
+                loadMoreBtn.textContent = 'Loading...';
+                
+                setTimeout(() => {
+                    renderPortfolio(currentFilter);
+                    loadMoreBtn.style.opacity = '1';
+                }, 600);
+                
+                console.log(`📈 Loading more items. Now showing: ${visibleItems}`);
+            });
+        }
+
+        // Create floating background elements
+        function createFloatingElements() {
+            const floatingContainer = document.createElement('div');
+            floatingContainer.className = 'portfolio-floating-elements';
+            
+            // Create floating dots
+            for (let i = 0; i < 15; i++) {
+                const dot = document.createElement('div');
+                
+                // Random size class
+                const sizes = ['', 'large', 'small'];
+                const randomSize = sizes[Math.floor(Math.random() * sizes.length)];
+                dot.className = `floating-dot ${randomSize}`;
+                
+                // Random position
+                const randomTop = Math.random() * 90 + 5; // 5% to 95%
+                const randomLeft = Math.random() * 90 + 5; // 5% to 95%
+                const randomDelay = Math.random() * 8; // 0 to 8 seconds
+                const randomDuration = Math.random() * 4 + 6; // 6 to 10 seconds
+                
+                dot.style.top = randomTop + '%';
+                dot.style.left = randomLeft + '%';
+                dot.style.animationDelay = randomDelay + 's';
+                dot.style.animationDuration = randomDuration + 's';
+                
+                floatingContainer.appendChild(dot);
+            }
+            
+            // Create light streaks
+            for (let i = 0; i < 5; i++) {
+                const streak = document.createElement('div');
+                streak.className = 'light-streak';
+                
+                // Random position
+                const randomTop = Math.random() * 80 + 10;
+                const randomLeft = Math.random() * 90 + 5;
+                const randomDelay = Math.random() * 12;
+                
+                streak.style.top = randomTop + '%';
+                streak.style.left = randomLeft + '%';
+                streak.style.animationDelay = randomDelay + 's';
+                
+                floatingContainer.appendChild(streak);
+            }
+            
+            document.querySelector('.portfolio-ring-section').appendChild(floatingContainer);
+            console.log('✨ Created floating dots and light streaks');
+        }
+
+        // Initialize portfolio and animations
+        createFloatingElements();
+        renderPortfolio('all');
+        
+        // Add scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        // Observe portfolio items as they're created
+        const originalAppendChild = imageRing.appendChild;
+        imageRing.appendChild = function(child) {
+            originalAppendChild.call(this, child);
+            observer.observe(child);
+        };
+
+        console.log(`✨ Monochromatic Portfolio created with ${portfolioItems.length} items`);
+    } else {
+        console.error('❌ Portfolio grid element not found!');
+    }
+
+    // Lazy loading for images with quantum effect
+    const images = document.querySelectorAll('.holo-card img');
+    console.log('Found images for lazy loading:', images.length);
+    
+    const imageObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                console.log('Loading image:', img.src);
+                
+                // Set initial state
+                img.style.opacity = '0';
+                img.style.transition = 'opacity 1s ease';
+                
+                // Handle successful load
+                img.onload = () => {
+                    console.log('Image loaded successfully:', img.src);
+                    img.style.opacity = '1';
+                    
+                    // Create loading effect only if canvas exists
+                    if (canvas && universeParticles) {
+                        for (let i = 0; i < 3; i++) {
+                            setTimeout(() => {
+                                const particle = new UniverseParticle();
+                                particle.x = Math.random() * canvas.width;
+                                particle.y = Math.random() * canvas.height;
+                                particle.color = '#ffffff';
+                                particle.size = 4;
+                                particle.opacity = 0.8;
+                                universeParticles.push(particle);
+                                
+                                setTimeout(() => {
+                                    const idx = universeParticles.indexOf(particle);
+                                    if (idx > -1) universeParticles.splice(idx, 1);
+                                }, 2000);
+                            }, i * 200);
+                        }
+                    }
+                };
+                
+                // Handle load error
+                img.onerror = () => {
+                    console.error('Failed to load image:', img.src);
+                    img.style.opacity = '1';
+                    img.alt = 'Image not found';
+                };
+                
+                // If image is already loaded (cached)
+                if (img.complete) {
+                    img.style.opacity = '1';
+                }
+                
+                imageObserver.unobserve(img);
+            }
+        });
+    });
+
+    images.forEach(img => imageObserver.observe(img));
+    
+    // Final initialization check
+    setTimeout(() => {
+        console.log('=== CREATIVE UNIVERSE INITIALIZATION COMPLETE ===');
+        console.log('Canvas:', canvas ? 'Found' : 'Not found');
+        console.log('Dimension tabs:', dimensionTabs.length);
+        console.log('Dimension spaces:', dimensionSpaces.length);
+        console.log('Holo cards:', holoCards.length);
+        console.log('Images:', images.length);
+        console.log('Active dimension space:', document.querySelector('.dimension-space.active') ? 'Found' : 'Not found');
+        console.log('=== END INITIALIZATION CHECK ===');
+    }, 1000);
+}
+
+// ===== ACHIEVEMENT COUNTER ANIMATION =====
+function animateAchievementCounters() {
+    const counters = document.querySelectorAll('.achievement-stats .stat-number');
+    
+    counters.forEach(counter => {
+        const target = parseInt(counter.parentElement.getAttribute('data-target'));
+        const duration = 2000; // 2 seconds
+        const step = target / (duration / 16); // 60fps
+        let current = 0;
+        
+        const updateCounter = () => {
+            if (current < target) {
+                current += step;
+                if (current > target) current = target;
+                counter.textContent = Math.floor(current);
+                requestAnimationFrame(updateCounter);
+            } else {
+                counter.textContent = target;
+            }
+        };
+        
+        updateCounter();
+    });
+}
+
+// Initialize achievement counters when the section is in view
+const achievementObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            animateAchievementCounters();
+            achievementObserver.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.5 });
+
+// Observe the achievements section
+const achievementsSection = document.querySelector('.achievements');
+if (achievementsSection) {
+    achievementObserver.observe(achievementsSection);
+}
+
+// ===== CREATIVE INTERACTIVE FOOTER FUNCTIONALITY =====
+
+// Initialize Footer Interactions
+function initCreativeFooter() {
+    console.log('Initializing Creative Footer...');
+    
+    // Scroll to Top Functionality
+    initScrollToTop();
+    
+    // Heart Interaction Effects
+    initHeartInteractions();
+    
+    // Enhanced Social Link Effects
+    initEnhancedSocialLinks();
+    
+    // Footer Particle System
+    initFooterParticleSystem();
+    
+    // Dynamic Footer Background
+    initDynamicFooterBackground();
+}
+
+// Scroll to Top Button
+function initScrollToTop() {
+    const scrollToTopBtn = document.getElementById('scrollToTop');
+    
+    if (!scrollToTopBtn) return;
+    
+    // Show/hide scroll to top button based on scroll position
+    window.addEventListener('scroll', () => {
+        const scrolled = window.pageYOffset;
+        const threshold = 300;
+        
+        if (scrolled > threshold) {
+            scrollToTopBtn.style.opacity = '1';
+            scrollToTopBtn.style.transform = 'translateY(0)';
+            scrollToTopBtn.style.pointerEvents = 'auto';
+        } else {
+            scrollToTopBtn.style.opacity = '0';
+            scrollToTopBtn.style.transform = 'translateY(20px)';
+            scrollToTopBtn.style.pointerEvents = 'none';
+        }
+    });
+    
+    // Scroll to top functionality
+    scrollToTopBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        
+        // Add click animation
+        scrollToTopBtn.style.transform = 'translateY(-2px) scale(0.95)';
+        
+        // Create ripple effect
+        createScrollTopRipple(scrollToTopBtn);
+        
+        // Smooth scroll to top
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+        
+        // Reset animation
+        setTimeout(() => {
+            scrollToTopBtn.style.transform = 'translateY(0) scale(1)';
+        }, 200);
+    });
+}
+
+// Create scroll to top ripple effect
+function createScrollTopRipple(button) {
+    const ripple = document.createElement('div');
+    ripple.style.cssText = `
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: rgba(100, 255, 218, 0.4);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        animation: scrollTopRipple 0.6s ease-out;
+        pointer-events: none;
+        z-index: 1;
+    `;
+    
+    button.appendChild(ripple);
+    
+    // Add ripple animation keyframe
+    if (!document.querySelector('#scrollTopRippleStyle')) {
+        const style = document.createElement('style');
+        style.id = 'scrollTopRippleStyle';
+        style.textContent = `
+            @keyframes scrollTopRipple {
+                0% {
+                    width: 0;
+                    height: 0;
+                    opacity: 1;
+                }
+                100% {
+                    width: 100px;
+                    height: 100px;
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    setTimeout(() => {
+        ripple.remove();
+    }, 600);
+}
+
+// Heart Interaction Effects
+function initHeartInteractions() {
+    const heartContainer = document.querySelector('.love-heart-container');
+    const heart = document.querySelector('.love-heart');
+    
+    if (!heartContainer || !heart) return;
+    
+    // Click interaction
+    heartContainer.addEventListener('click', () => {
+        // Create heart burst effect
+        createHeartBurst(heartContainer);
+        
+        // Add temporary scale animation
+        heart.style.transform = 'scale(1.3)';
+        setTimeout(() => {
+            heart.style.transform = 'scale(1)';
+        }, 300);
+        
+        // Create floating hearts
+        createFloatingHearts(heartContainer);
+    });
+    
+    // Hover effect enhancement
+    heartContainer.addEventListener('mouseenter', () => {
+        heart.style.filter = 'brightness(1.3) saturate(1.5)';
+    });
+    
+    heartContainer.addEventListener('mouseleave', () => {
+        heart.style.filter = 'brightness(1) saturate(1)';
+    });
+}
+
+// Create heart burst effect
+function createHeartBurst(container) {
+    const rect = container.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    for (let i = 0; i < 8; i++) {
+        const particle = document.createElement('div');
+        particle.innerHTML = '💖';
+        particle.style.cssText = `
+            position: fixed;
+            left: ${centerX}px;
+            top: ${centerY}px;
+            font-size: 1rem;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+        `;
+        
+        document.body.appendChild(particle);
+        
+        const angle = (i / 8) * Math.PI * 2;
+        const distance = 80 + Math.random() * 40;
+        const duration = 1200 + Math.random() * 400;
+        
+        particle.animate([
+            {
+                transform: 'translate(-50%, -50%) scale(0) rotate(0deg)',
+                opacity: 1
+            },
+            {
+                transform: `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) scale(1.2) rotate(${angle * 180 / Math.PI}deg)`,
+                opacity: 0.8
+            },
+            {
+                transform: `translate(${Math.cos(angle) * distance * 1.5}px, ${Math.sin(angle) * distance * 1.5}px) scale(0) rotate(${angle * 360 / Math.PI}deg)`,
+                opacity: 0
+            }
+        ], {
+            duration: duration,
+            easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+        }).onfinish = () => {
+            particle.remove();
+        };
+    }
+}
+
+// Create floating hearts
+function createFloatingHearts(container) {
+    const rect = container.getBoundingClientRect();
+    
+    for (let i = 0; i < 3; i++) {
+        const heart = document.createElement('div');
+        heart.innerHTML = '❤️';
+        heart.style.cssText = `
+            position: fixed;
+            left: ${rect.left + Math.random() * rect.width}px;
+            top: ${rect.bottom}px;
+            font-size: 0.8rem;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.8;
+        `;
+        
+        document.body.appendChild(heart);
+        
+        heart.animate([
+            {
+                transform: 'translateY(0) scale(0.5)',
+                opacity: 0.8
+            },
+            {
+                transform: 'translateY(-150px) scale(1)',
+                opacity: 0
+            }
+        ], {
+            duration: 2000 + Math.random() * 1000,
+            easing: 'ease-out'
+        }).onfinish = () => {
+            heart.remove();
+        };
+    }
+}
+
+// Enhanced Social Link Effects
+function initEnhancedSocialLinks() {
+    const socialLinks = document.querySelectorAll('.social-link-enhanced');
+    
+    socialLinks.forEach(link => {
+        // Click effect
+        link.addEventListener('click', (e) => {
+            // Create ripple effect
+            const ripple = link.querySelector('.social-ripple');
+            if (ripple) {
+                ripple.style.width = '0';
+                ripple.style.height = '0';
+                ripple.style.opacity = '0.3';
+                
+                setTimeout(() => {
+                    ripple.style.width = '100px';
+                    ripple.style.height = '100px';
+                    ripple.style.opacity = '0';
+                }, 10);
+            }
+        });
+        
+        // Enhanced hover effects
+        link.addEventListener('mouseenter', () => {
+            // Create hover particles
+            createSocialHoverParticles(link);
+        });
+    });
+}
+
+// Create social hover particles
+function createSocialHoverParticles(socialLink) {
+    const rect = socialLink.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    for (let i = 0; i < 4; i++) {
+        const particle = document.createElement('div');
+        particle.style.cssText = `
+            position: fixed;
+            left: ${centerX}px;
+            top: ${centerY}px;
+            width: 4px;
+            height: 4px;
+            background: rgba(100, 255, 218, 0.8);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+        `;
+        
+        document.body.appendChild(particle);
+        
+        const angle = (i / 4) * Math.PI * 2;
+        const distance = 30 + Math.random() * 20;
+        
+        particle.animate([
+            {
+                transform: 'translate(-50%, -50%) scale(0)',
+                opacity: 1
+            },
+            {
+                transform: `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) scale(1)`,
+                opacity: 0.5
+            },
+            {
+                transform: `translate(${Math.cos(angle) * distance * 1.5}px, ${Math.sin(angle) * distance * 1.5}px) scale(0)`,
+                opacity: 0
+            }
+        ], {
+            duration: 800,
+            easing: 'ease-out'
+        }).onfinish = () => {
+            particle.remove();
+        };
+    }
+}
+
