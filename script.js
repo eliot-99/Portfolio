@@ -202,7 +202,8 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             
             homeSection.addEventListener('touchmove', (e) => {
-                e.preventDefault(); // Prevent scrolling while touching grid
+                if (window.innerWidth <= 768) return;
+                e.preventDefault();
                 const touch = e.touches[0];
                 const rect = homeSection.getBoundingClientRect();
                 const touchX = (touch.clientX - rect.left) / rect.width;
